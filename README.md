@@ -1,5 +1,11 @@
 This repository contains a decentralized application (dApp) for managing Renewable Energy Certificates (RECs) on the Ethereum blockchain. The application allows users to issue, verify, request, and sell RECs using smart contracts. Below you'll find an overview of the smart contract, setup instructions, and usage examples.
 
+Usage
+Functions
+Issue REC: Issues a new REC with the provided data.
+Verify REC: Verifies if the provided data matches the stored REC data.
+Request REC: Submits a request for a REC with the specified kWh.
+Issue and Sell REC: Issues and sells a REC for a specified price.
 
 Setup Instructions
 
