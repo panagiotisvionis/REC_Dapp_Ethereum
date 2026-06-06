@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: recchain-api
+    runtime: node
+    rootDir: .
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: ALCHEMY_API_KEY
+        sync: false
+      - key: CONTRACT_ADDRESS
+        sync: false
+      - key: ISSUER_PRIVATE_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: APP_BASE_URL
+        sync: false

@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://recchain-api.onrender.com/api/:path*"
+    }
+  ]
+}

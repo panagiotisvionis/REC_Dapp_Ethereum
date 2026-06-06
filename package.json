@@ -1,0 +1,41 @@
+{
+  "name": "rec_dapp_ethereum",
+  "version": "1.0.0",
+  "description": "This repository contains a decentralized application (dApp) for managing Renewable Energy Certificates (RECs) on the Ethereum blockchain. The application allows users to issue, verify, request, and sell RECs using smart contracts. Below you'll find an overview of the smart contract, setup instructions, and usage examples.",
+  "main": "client.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client:install": "cd client && npm install",
+    "client:dev": "cd client && npm run dev",
+    "client:build": "cd client && npm run build",
+    "dev": "node server/index.js",
+    "seed": "node scripts/seed.js",
+    "seed:dry": "node scripts/seed.js --dry-run",
+    "post-deploy": "node scripts/post-deploy.js",
+    "grant-issuer": "node scripts/grant-issuer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panagiotisvionis/REC_Dapp_Ethereum.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/panagiotisvionis/REC_Dapp_Ethereum/issues"
+  },
+  "homepage": "https://github.com/panagiotisvionis/REC_Dapp_Ethereum#readme",
+  "dependencies": {
+    "@chainlink/contracts": "^1.5.0",
+    "@openzeppelin/contracts": "^5.6.1",
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1",
+    "pdfkit": "^0.18.0",
+    "qrcode": "^1.5.4"
+  }
+}

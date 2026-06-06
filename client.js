@@ -1,88 +1,117 @@
 require('dotenv').config();
-const Web3 = require('web3');
+const Web3             = require('web3');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const contract = require('@truffle/contract');
-const RecDappArtifact = require('./build/contracts/RecDapp.json');
+const contract         = require('@truffle/contract');
+const RecDappArtifact  = require('./build/contracts/RecDapp.json');
 
-const alchemyUrl = `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || '0x113b2333e8De598240F627CE3592eA2D78e0d0aB';
+
 const provider = new HDWalletProvider({
-  mnemonic: {
-    phrase: process.env.MNEMONIC
-  },
-  providerOrUrl: alchemyUrl
+  mnemonic:      { phrase: process.env.MNEMONIC },
+  providerOrUrl: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
 });
 const web3 = new Web3(provider);
 
 const RecDapp = contract(RecDappArtifact);
 RecDapp.setProvider(provider);
 
-async function measureTransactionTime(transactionFunction, description) {
-  const startTime = Date.now(); // Ξεκινήστε το χρονόμετρο
-  
-  console.log(`${description} started at ${new Date(startTime).toISOString()}`);
+// EnergySource enum values — must match contract
+const EnergySource = { Solar: 0, Wind: 1, Hydro: 2, Biomass: 3, Geothermal: 4, Other: 5 };
 
-  const receipt = await transactionFunction();
-  console.log(`${description} Transaction Receipt:`, receipt);
+// ─── Helper ───────────────────────────────────────────────────────────────────
 
-  const endTime = Date.now(); // Σταματήστε το χρονόμετρο
-  const timeDifference = (endTime - startTime) / 1000; // από milliseconds σε δευτερόλεπτα
+async function measure(label, fn) {
+  const start = Date.now();
+  console.log(`\n[${label}] starting...`);
+  try {
+    const receipt = await fn();
+    const elapsed = ((Date.now() - start) / 1000).toFixed(2);
 
-  if (receipt && receipt.receipt && receipt.receipt.gasUsed) {
-    const gasUsed = receipt.receipt.gasUsed;
-    const gasPrice = await web3.eth.getGasPrice();
-    const fee = gasUsed * gasPrice;
-    const feeInEther = web3.utils.fromWei(fee.toString(), 'ether');
-    const computeUnitsConsumed = gasUsed;
+    if (receipt && receipt.receipt) {
+      const gasUsed  = receipt.receipt.gasUsed;
+      const gasPrice = BigInt(await web3.eth.getGasPrice());
+      const feeWei   = BigInt(gasUsed) * gasPrice;
+      console.log(`[${label}] done in ${elapsed}s | gas: ${gasUsed} | fee: ${web3.utils.fromWei(feeWei.toString(), 'ether')} ETH`);
+    } else {
+      console.log(`[${label}] done in ${elapsed}s (view call, no gas)`);
+    }
 
-    console.log(`${description} completed at ${new Date(endTime).toISOString()} in`, timeDifference, 'seconds');
-    console.log(`${description} cost:`, fee, 'wei (', feeInEther, 'ETH)');
-    console.log(`${description} compute units consumed:`, computeUnitsConsumed);
-  } else {
-    console.log(`${description} completed at ${new Date(endTime).toISOString()} in`, timeDifference, 'seconds');
-    console.log('No gas used information available for this transaction.');
+    return receipt;
+  } catch (err) {
+    console.error(`[${label}] FAILED:`, err.message);
+    throw err;
   }
 }
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
   const accounts = await web3.eth.getAccounts();
-  console.log('Accounts:', accounts);
+  const [admin, producer, buyer] = accounts;
 
-  if (!accounts || accounts.length === 0) {
-    throw new Error('No accounts found. Please ensure your Ethereum client is configured correctly.');
-  }
+  console.log('Accounts:');
+  console.log('  admin   :', admin);
+  console.log('  producer:', producer);
+  console.log('  buyer   :', buyer);
 
-  accounts.forEach(account => {
-    if (!web3.utils.isAddress(account)) {
-      throw new Error(`Invalid address: ${account}`);
-    }
+  const rec = await RecDapp.at(CONTRACT_ADDRESS);
+
+  // 1. Issue a REC batch (1 500 kWh = 1.5 MWh solar, Greece-Attica)
+  const issueTx = await measure('issueRec', () =>
+    rec.issueRec(
+      producer,
+      EnergySource.Solar,
+      1500,
+      'GR-AT',
+      'ipfs://QmExampleCID',
+      { from: admin }
+    )
+  );
+
+  // Extract token ID from the RecIssued event
+  const tokenId = issueTx.logs.find(l => l.event === 'RecIssued').args.tokenId;
+  console.log('  tokenId:', tokenId.toString());
+
+  // 2. Verify the REC
+  await measure('verifyRec', async () => {
+    const [valid, meta] = await rec.verifyRec(tokenId);
+    console.log('  valid:', valid);
+    console.log('  source:', Object.keys(EnergySource)[meta.source]);
+    console.log('  kwh:', meta.kwh.toString());
+    console.log('  location:', meta.location);
+    return { receipt: null };
   });
 
-  const recDapp = await RecDapp.at('0x113b2333e8De598240F627CE3592eA2D78e0d0aB');
+  // 3. Producer approves contract to hold tokens (required before listRec)
+  await measure('setApprovalForAll', () =>
+    rec.setApprovalForAll(rec.address, true, { from: producer })
+  );
 
-  await measureTransactionTime(async () => {
-    const receipt = await recDapp.issueRec(accounts[1], 'example_data', { from: accounts[0] });
-    console.log('REC issued to:', accounts[1]);
-    return receipt;
-  }, 'REC issued');
+  // 4. Producer lists 1 000 kWh at 0.0001 ETH per kWh
+  const pricePerKwh = web3.utils.toWei('0.0001', 'ether');
+  const listTx = await measure('listRec', () =>
+    rec.listRec(tokenId, 1000, pricePerKwh, { from: producer })
+  );
+  const listingId = listTx.logs.find(l => l.event === 'RecListed').args.listingId;
+  console.log('  listingId:', listingId.toString());
 
-  await measureTransactionTime(async () => {
-    const receipt = await recDapp.verifyRec(accounts[1], 'example_data', { from: accounts[0] });
-    return { receipt: receipt }; // Επιστρέφουμε ένα αντικείμενο με την απόδειξη
-  }, 'REC verified');
+  // 5. Buyer purchases 500 kWh
+  const buyAmount  = 500;
+  const totalCost  = BigInt(pricePerKwh) * BigInt(buyAmount);
+  await measure('buyRec', () =>
+    rec.buyRec(listingId, buyAmount, { from: buyer, value: totalCost.toString() })
+  );
 
-  await measureTransactionTime(async () => {
-    const receipt = await recDapp.requestRec(accounts[1], 1000, { from: accounts[0] });
-    return receipt;
-  }, 'REC request submitted');
+  // 6. Buyer retires 200 kWh (claims renewable energy usage)
+  await measure('retireRec', () =>
+    rec.retireRec(tokenId, 200, { from: buyer })
+  );
 
-  await measureTransactionTime(async () => {
-    const receipt = await recDapp.issueAndSellRec(accounts[1], 'example_data', web3.utils.toWei('0.01', 'ether'), {
-      from: accounts[0],
-      value: web3.utils.toWei('0.01', 'ether')
-    });
-    console.log('REC issued and sold');
-    return receipt;
-  }, 'REC issued and sold');
+  // 7. Check remaining kWh for this token
+  const remaining = await rec.remainingKwh(tokenId);
+  console.log('\n  Remaining un-retired kWh:', remaining.toString());
 }
 
-main().then(() => console.log('Done')).catch(err => console.error(err));
+main()
+  .then(() => { console.log('\nAll done.'); process.exit(0); })
+  .catch(err => { console.error(err); process.exit(1); });

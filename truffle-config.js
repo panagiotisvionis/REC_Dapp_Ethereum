@@ -1,27 +1,70 @@
+require('dotenv').config();
+
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const alchemyApiKey = "Jfh2pAl1Ersa9GhEAYri5-MWwXY0Oob_";
-const mnemonic = "winner sting switch business brave blind spring taxi parent dove grief novel";
+
+const { MNEMONIC, ALCHEMY_API_KEY, POLYGONSCAN_API_KEY } = process.env;
+
+function provider(rpcUrl) {
+  return () => new HDWalletProvider({
+    mnemonic:      { phrase: MNEMONIC },
+    providerOrUrl: rpcUrl,
+    pollingInterval: 8000,
+  });
+}
 
 module.exports = {
   networks: {
+    development: {
+      host:       '127.0.0.1',
+      port:       8545,
+      network_id: '*',
+    },
+
     sepolia: {
-      provider: () => new HDWalletProvider({
-        mnemonic: {
-          phrase: mnemonic
-        },
-        providerOrUrl: `https://eth-sepolia.g.alchemy.com/v2/Jfh2pAl1Ersa9GhEAYri5-MWwXY0Oob_`,
-        pollingInterval: 8000 // Διάστημα αιτήσεων polling σε milliseconds (8 seconds)
-      }),
-      network_id: 11155111,       // Sepolia's id
-      gas: 5500000,        // Gas limit
-      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      provider:      provider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
+      network_id:    11155111,
+      gas:           5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun:    true,
+    },
+
+    // Polygon Amoy (Mumbai replacement) — testnet, very low gas cost
+    amoy: {
+      provider:      provider(`https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
+      network_id:    80002,
+      gas:           5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun:    true,
+    },
+
+    // Polygon mainnet — production
+    polygon: {
+      provider:      provider(`https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
+      network_id:    137,
+      gas:           5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun:    false,
     },
   },
+
+  plugins: ['truffle-plugin-verify'],
+
+  api_keys: {
+    polygonscan: POLYGONSCAN_API_KEY,
+  },
+
   compilers: {
     solc: {
-      version: "0.8.0",    // Fetch exact version from solc-bin (default: truffle's version)
-    }
-  }
+      version:  '0.8.28',
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs:    200,
+        },
+      },
+    },
+  },
 };
