@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { ethers }                                                       from 'ethers';
-import { CONTRACT_ABI, CONTRACT_ADDRESS, SEPOLIA_CHAIN_ID }            from '../lib/config';
+import { CONTRACT_ABI, CONTRACT_ADDRESS, TARGET_CHAIN_ID, NETWORK_NAME } from '../lib/config';
 
 const Web3Context = createContext(null);
 
@@ -24,16 +24,37 @@ export function Web3Provider({ children }) {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
 
       const currentChain = await window.ethereum.request({ method: 'eth_chainId' });
-      if (currentChain !== SEPOLIA_CHAIN_ID) {
+      if (currentChain !== TARGET_CHAIN_ID) {
         try {
+          // Try switching first (works for known networks)
           await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: SEPOLIA_CHAIN_ID }],
+            params: [{ chainId: TARGET_CHAIN_ID }],
           });
-        } catch {
-          setError('Please switch MetaMask to the Sepolia testnet.');
-          setConnecting(false);
-          return;
+        } catch (switchErr) {
+          // Chain not in MetaMask yet — try adding it (works for Hardhat/custom RPCs)
+          if (switchErr.code === 4902) {
+            const rpcUrl = import.meta.env.VITE_RPC_URL || 'http://127.0.0.1:8545';
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId:         TARGET_CHAIN_ID,
+                  chainName:       NETWORK_NAME,
+                  nativeCurrency:  { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                  rpcUrls:         [rpcUrl],
+                }],
+              });
+            } catch {
+              setError(`Please switch MetaMask to ${NETWORK_NAME} (Chain ID ${parseInt(TARGET_CHAIN_ID, 16)}).`);
+              setConnecting(false);
+              return;
+            }
+          } else {
+            setError(`Please switch MetaMask to ${NETWORK_NAME} (Chain ID ${parseInt(TARGET_CHAIN_ID, 16)}).`);
+            setConnecting(false);
+            return;
+          }
         }
       }
 

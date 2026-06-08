@@ -1,0 +1,54 @@
+{
+  "config": {
+    "n": 1000,
+    "anomaly_rate": 0.1,
+    "seed": 42,
+    "classify_threshold": 2.5,
+    "flagged_threshold": 4.0
+  },
+  "confusion_matrix": {
+    "TN": 889,
+    "FP": 11,
+    "FN": 0,
+    "TP": 100
+  },
+  "metrics": {
+    "accuracy": 0.989,
+    "precision": 0.9009,
+    "recall": 1.0,
+    "f1": 0.9479,
+    "roc_auc": 0.9999
+  },
+  "anomaly_type_breakdown": {
+    "zero_reading": {
+      "detected": 18,
+      "total": 18,
+      "detection_rate": 1.0
+    },
+    "large_spike": {
+      "detected": 21,
+      "total": 21,
+      "detection_rate": 1.0
+    },
+    "night_generation": {
+      "detected": 23,
+      "total": 23,
+      "detection_rate": 1.0
+    },
+    "moderate_spike": {
+      "detected": 11,
+      "total": 11,
+      "detection_rate": 1.0
+    },
+    "sensor_stuck": {
+      "detected": 14,
+      "total": 14,
+      "detection_rate": 1.0
+    },
+    "large_dropout": {
+      "detected": 13,
+      "total": 13,
+      "detection_rate": 1.0
+    }
+  }
+}

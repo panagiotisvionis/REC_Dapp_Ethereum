@@ -1,0 +1,19 @@
+RecChain AI Auditor — Evaluation Report
+============================================================
+n=1000, anomaly_rate=10%, seed=42
+threshold |z| >= 2.5
+
+Accuracy : 0.9890
+Precision: 0.9009
+Recall   : 1.0000
+F1       : 0.9479
+ROC-AUC  : 0.9999
+
+              precision    recall  f1-score   support
+
+      Normal     1.0000    0.9878    0.9939       900
+     Anomaly     0.9009    1.0000    0.9479       100
+
+    accuracy                         0.9890      1000
+   macro avg     0.9505    0.9939    0.9709      1000
+weighted avg     0.9901    0.9890    0.9893      1000

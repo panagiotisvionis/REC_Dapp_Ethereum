@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ethers }                           from 'ethers';
 import { useWeb3 }                          from '../context/Web3Context';
-import { ENERGY_SOURCES, SOURCE_ICONS }     from '../lib/config';
+import { ENERGY_SOURCES, SOURCE_ICONS, DEMO_MODE } from '../lib/config';
+import { fetchListings }                    from '../lib/api';
 
 function ListingCard({ listing, onBuy }) {
   const [amount, setAmount]   = useState('');
   const [loading, setLoading] = useState(false);
-  const source = ENERGY_SOURCES[listing.metadata.source] || 'Other';
-  const priceEth = ethers.formatEther(listing.pricePerKwh);
+  const source    = ENERGY_SOURCES[listing.metadata.source] || 'Other';
+  const priceEth  = ethers.formatEther(listing.pricePerKwh);
   const expiresDate = new Date(Number(listing.metadata.expiresAt) * 1000).toLocaleDateString();
 
   async function handleBuy() {
@@ -54,27 +55,33 @@ function ListingCard({ listing, onBuy }) {
 
       <div className="listing-footer">
         <span className="token-id">Token #{listing.tokenId}</span>
-        <div className="buy-row">
-          <input
-            type="number"
-            className="input-sm"
-            placeholder="kWh"
-            min="1"
-            max={listing.amount}
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-          />
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={handleBuy}
-            disabled={loading || !amount}
-          >
-            {loading ? '…' : 'Buy'}
-          </button>
-        </div>
-        {amount && (
+        {DEMO_MODE ? (
+          <div className="demo-buy-cta">
+            Connect wallet to trade
+          </div>
+        ) : (
+          <div className="buy-row">
+            <input
+              type="number"
+              className="input-sm"
+              placeholder="kWh"
+              min="1"
+              max={listing.amount}
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+            />
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={handleBuy}
+              disabled={loading || !amount}
+            >
+              {loading ? '…' : 'Buy'}
+            </button>
+          </div>
+        )}
+        {!DEMO_MODE && amount && (
           <span className="price-preview">
-            Total: {parseFloat(ethers.formatEther(BigInt(listing.pricePerKwh) * BigInt(Math.floor(Number(amount) || 0))).toFixed(6))} ETH
+            Total: {parseFloat(ethers.formatEther(BigInt(listing.pricePerKwh) * BigInt(Math.floor(Number(amount) || 0)))).toFixed(6)} ETH
           </span>
         )}
       </div>
@@ -83,17 +90,16 @@ function ListingCard({ listing, onBuy }) {
 }
 
 export default function Marketplace() {
-  const { contract, account }           = useWeb3();
-  const [listings,  setListings]        = useState([]);
-  const [loading,   setLoading]         = useState(true);
-  const [txStatus,  setTxStatus]        = useState(null);
-  const [filter,    setFilter]          = useState('all');
+  const { contract, account }    = useWeb3();
+  const [listings,  setListings] = useState([]);
+  const [loading,   setLoading]  = useState(true);
+  const [txStatus,  setTxStatus] = useState(null);
+  const [filter,    setFilter]   = useState('all');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch('/api/listings');
-      const data = await res.json();
+      const data = await fetchListings();
       setListings(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
@@ -107,7 +113,7 @@ export default function Marketplace() {
     setTxStatus({ type: 'pending', msg: 'Confirm in MetaMask…' });
     try {
       const totalCost = BigInt(pricePerKwh) * BigInt(amount);
-      const tx      = await contract.buyRec(listingId, amount, { value: totalCost });
+      const tx = await contract.buyRec(listingId, amount, { value: totalCost });
       setTxStatus({ type: 'pending', msg: 'Transaction submitted. Waiting for confirmation…' });
       await tx.wait();
       setTxStatus({ type: 'success', msg: `Purchased ${amount} kWh successfully!` });
@@ -124,9 +130,17 @@ export default function Marketplace() {
   return (
     <div className="page">
       <div className="page-header">
-        <h1>REC Marketplace</h1>
-        <p className="page-subtitle">Buy verified Renewable Energy Certificates directly on-chain.</p>
+        <h1>REC Exchange</h1>
+        <p className="page-subtitle">
+          On-chain Renewable Energy Certificates — verified, traceable, ESG-ready.
+        </p>
       </div>
+
+      {DEMO_MODE && (
+        <div className="demo-notice">
+          <span>📊 Demo Mode — live listings shown. Connect wallet to purchase RECs.</span>
+        </div>
+      )}
 
       {txStatus && (
         <div className={`alert alert-${txStatus.type}`}>
@@ -135,7 +149,7 @@ export default function Marketplace() {
         </div>
       )}
 
-      {!account && (
+      {!account && !DEMO_MODE && (
         <div className="alert alert-info">Connect your wallet to purchase RECs.</div>
       )}
 

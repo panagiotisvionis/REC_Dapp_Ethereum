@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams }           from 'react-router-dom';
 import { ENERGY_SOURCES, SOURCE_ICONS, CO2_PER_MWH } from '../lib/config';
+import { fetchRec } from '../lib/api';
 
 /**
  * Compact embeddable badge — rendered in an <iframe> on external sites.
@@ -13,9 +14,8 @@ export default function EmbedBadge() {
   const [error,   setError]   = useState(null);
 
   useEffect(() => {
-    fetch(`/api/recs/${tokenId}`)
-      .then(r => r.json())
-      .then(d => { if (d.error) throw new Error(d.error); setData(d); })
+    fetchRec(tokenId)
+      .then(d => setData(d))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [tokenId]);

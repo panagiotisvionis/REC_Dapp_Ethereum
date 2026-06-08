@@ -20,6 +20,7 @@ export default function Navbar() {
         <Link className={pathname === '/marketplace' ? 'nav-link active' : 'nav-link'} to="/marketplace">Marketplace</Link>
         <Link className={pathname === '/portfolio'   ? 'nav-link active' : 'nav-link'} to="/portfolio">Portfolio</Link>
         <Link className={pathname === '/auditor'     ? 'nav-link active' : 'nav-link'} to="/auditor">AI Auditor</Link>
+        <Link className={pathname === '/passport'    ? 'nav-link active' : 'nav-link'} to="/passport">Passport</Link>
         {isIssuer && (
           <Link className={pathname === '/issue' ? 'nav-link active' : 'nav-link'} to="/issue">Issue REC</Link>
         )}

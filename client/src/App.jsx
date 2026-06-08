@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Web3Provider }  from './context/Web3Context';
 import Navbar            from './components/Navbar';
 import LandingPage       from './components/LandingPage';
+import PassportPage      from './components/PassportPage';
 import Marketplace       from './components/Marketplace';
 import Portfolio         from './components/Portfolio';
 import IssueRec          from './components/IssueRec';
@@ -29,6 +30,7 @@ function MainLayout() {
           <Route path="/marketplace"         element={<Marketplace />} />
           <Route path="/portfolio"           element={<Portfolio   />} />
           <Route path="/issue"               element={<IssueRec    />} />
+          <Route path="/passport"            element={<PassportPage />} />
           <Route path="/verify/:tokenId"     element={<VerifyPage  />} />
           <Route path="/auditor"             element={<AIAuditor   />} />
         </Routes>

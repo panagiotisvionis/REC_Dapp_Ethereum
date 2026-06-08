@@ -30,11 +30,14 @@ let PROVIDER, SIGNER, CONTRACT;
 
 function initWeb3() {
   if (PROVIDER) return; // already initialized
-  PROVIDER = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
+  const rpc = process.env.RPC_URL ||
+    `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+  PROVIDER = new ethers.JsonRpcProvider(rpc);
   if (!process.env.ISSUER_PRIVATE_KEY || process.env.ISSUER_PRIVATE_KEY.includes('your_issuer')) {
     throw new Error('ISSUER_PRIVATE_KEY is not set in .env');
   }
-  SIGNER   = new ethers.Wallet(process.env.ISSUER_PRIVATE_KEY, PROVIDER);
+  const wallet = new ethers.Wallet(process.env.ISSUER_PRIVATE_KEY, PROVIDER);
+  SIGNER   = new ethers.NonceManager(wallet);
   CONTRACT = new ethers.Contract(process.env.CONTRACT_ADDRESS, artifact.abi, SIGNER);
 }
 

@@ -1,0 +1,24 @@
+RecChain Smart Contract — Gas Cost Table
+Network: Hardhat (local, EVM cancun) | Solidity 0.8.28, optimizer 200 runs
+Gas price: 30 gwei | ETH/USD: $3200
+
+Function                           Gas Used   Cost (USD)   Note
+--------------------------------------------------------------------------------
+deploy                              3995268    $383.5457   (one-time)
+grantRole                             51513      $4.9452   
+setFunctionsSource                   160203     $15.3795   (151b source)
+setDonConfig                          51796      $4.9724   
+setURI                                40973      $3.9334   
+issueRec                             222078     $21.3195   (1 MWh, Solar)
+issueRec (5 MWh)                     222090     $21.3206   (5 MWh, Wind)
+issueRec (100 MWh)                   222018     $21.3137   (100 MWh, Hydro)
+safeTransferFrom                      57236      $5.4947   (500 kWh, P2P)
+listRec                              192985     $18.5266   (500 kWh listed)
+buyRec                                81244      $7.7994   (100 kWh partial)
+buyRec (clears listing)               55984      $5.3745   (400 kWh, full clear)
+cancelListing                         54723      $5.2534   
+retireRec (partial)                   81120      $7.7875   (500 kWh)
+retireRec (full batch)               101315      $9.7262   (1000 kWh, sets fullyRetired)
+--------------------------------------------------------------------------------
+
+Note: costs are estimates at 30 gwei. Actual Sepolia/mainnet costs vary with network congestion.

@@ -17,6 +17,13 @@ export const SOURCE_ICONS = {
 // 1 MWh ≈ 0.35 tCO₂ avoided (EU average grid emission factor)
 export const CO2_PER_MWH = 0.35;
 
-export const SEPOLIA_CHAIN_ID = '0xaa36a7'; // 11155111
+// Demo mode — set VITE_DEMO_MODE=true in .env.local for investor demos
+export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
 
-export const ISSUER_ROLE = '0x0100c9b5e1d1094e2f9d8faa29f62b3b25d24a2a1f7a3d2b0c5e6f8a9b2c3d4'; // placeholder — resolved from contract at runtime
+// Network config — override via .env.local for local dev
+// VITE_CHAIN_ID=0x539  (Hardhat 1337) or 0xaa36a7 (Sepolia 11155111)
+export const TARGET_CHAIN_ID  = import.meta.env.VITE_CHAIN_ID    || '0xaa36a7';
+export const NETWORK_NAME     = import.meta.env.VITE_NETWORK_NAME || 'Sepolia';
+
+// Keep alias for any components that still import SEPOLIA_CHAIN_ID
+export const SEPOLIA_CHAIN_ID = TARGET_CHAIN_ID;

@@ -14,9 +14,9 @@ const artifact    = require('../build/contracts/RecDapp.json');
 
 async function main() {
   // Admin = deployer (first account from mnemonic)
-  const provider  = new ethers.JsonRpcProvider(
-    `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
-  );
+  const rpc = process.env.RPC_URL ||
+    `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+  const provider = new ethers.JsonRpcProvider(rpc);
 
   if (!process.env.MNEMONIC || process.env.MNEMONIC.includes('twelve word')) {
     throw new Error('MNEMONIC is not set in .env');

@@ -7,9 +7,9 @@ let _signer    = null;
 
 function getProvider() {
   if (!_provider) {
-    _provider = new ethers.JsonRpcProvider(
-      `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
-    );
+    const rpc = process.env.RPC_URL ||
+      `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`;
+    _provider = new ethers.JsonRpcProvider(rpc);
   }
   return _provider;
 }

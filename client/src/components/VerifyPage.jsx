@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link }     from 'react-router-dom';
-import { ENERGY_SOURCES, SOURCE_ICONS, CO2_PER_MWH } from '../lib/config';
+import { ENERGY_SOURCES, SOURCE_ICONS, CO2_PER_MWH, DEMO_MODE } from '../lib/config';
+import { fetchRec }            from '../lib/api';
 
 const KM_PER_TCO2    = 4000;
 const TREES_PER_TCO2 = 48;
@@ -27,9 +28,8 @@ export default function VerifyPage() {
   const [error,   setError]    = useState(null);
 
   useEffect(() => {
-    fetch(`/api/recs/${tokenId}`)
-      .then(r => r.json())
-      .then(d => { if (d.error) throw new Error(d.error); setData(d); })
+    fetchRec(tokenId)
+      .then(d => setData(d))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [tokenId]);
@@ -125,22 +125,18 @@ export default function VerifyPage() {
 
         {/* ── Actions ───────────────────────────────────────────────── */}
         <div className="verify-actions">
-          <a
-            href={`/api/recs/${tokenId}/passport`}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-primary"
-          >
-            View PDF Passport
-          </a>
-          <a
-            href={`/api/recs/${tokenId}/passport?download=1`}
-            className="btn btn-secondary"
-          >
-            Download PDF
-          </a>
+          {!DEMO_MODE && (
+            <a href={`/api/recs/${tokenId}/passport`} target="_blank" rel="noreferrer" className="btn btn-primary">
+              View PDF Passport
+            </a>
+          )}
+          {!DEMO_MODE && (
+            <a href={`/api/recs/${tokenId}/passport?download=1`} className="btn btn-secondary">
+              Download PDF
+            </a>
+          )}
           <Link to="/" className="btn btn-outline">
-            ← Marketplace
+            ← Back
           </Link>
         </div>
 
