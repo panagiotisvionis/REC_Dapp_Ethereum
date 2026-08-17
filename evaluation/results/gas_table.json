@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-07T21:51:43.629Z",
+  "timestamp": "2026-08-17T15:19:47.593Z",
   "network": "Hardhat (local, cancun fork)",
   "solidity": "0.8.28, optimizer 200 runs",
   "gas_price_gwei": 30,
@@ -7,8 +7,8 @@
   "entries": [
     {
       "function": "deploy",
-      "gas_used": 3995268,
-      "cost_usd": 383.5457,
+      "gas_used": 3995280,
+      "cost_usd": 383.5469,
       "note": "(one-time)"
     },
     {

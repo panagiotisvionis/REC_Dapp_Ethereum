@@ -1,0 +1,17 @@
+========================================================================================
+  Deployability of the decision rule inside a stateless oracle workflow
+========================================================================================
+Detector                  source B                        deps   fitted   us/decision
+RecChain z-score               112                        none       no         13.42
+EWMA control chart             192                        none       no         23.31
+Tukey IQR fence                190                        none       no          4.21
+Robust z (median/MAD)          192                        none       no          9.78
+Isolation Forest               n/a  scikit-learn, numpy, scipy      yes     239334.05
+
+  Interpretation: the four closed-form rules are all deployable; they
+  differ by less than an order of magnitude in cost and carry no
+  dependencies. Isolation Forest is the only one requiring a fitted
+  model and a numerical stack, and is ~3 orders of magnitude slower
+  per decision when fitted per window.
+
+  Written -> /home/lysos/Desktop/Panagiotis/papers/RecChain/evaluation_v2/results/deployability.json

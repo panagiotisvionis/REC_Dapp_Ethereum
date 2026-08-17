@@ -1,5 +1,18 @@
 /**
- * RecChain — Chainlink Functions Source
+ * RecChain — Chainlink Functions Source  [LEGACY / EVALUATED IMPLEMENTATION]
+ *
+ * STATUS: Chainlink Functions was withdrawn in June 2026 (testnets 15 June,
+ * mainnet 30 June). This script can no longer execute. It is retained because
+ * it is the implementation whose behaviour the accompanying manuscript
+ * evaluates, and it is the baseline the revised workflow is compared against.
+ * For the current design see ../cre/screening/main.ts.
+ *
+ * KNOWN DEFECTS, repaired in the revised workflow and reported in the paper:
+ *   - historicalAvg and stdDev are taken from the SAME response as the reading
+ *     under test, so an adversary controlling the endpoint satisfies the gate;
+ *   - when either is absent the 3-sigma test is SKIPPED rather than failing
+ *     closed;
+ *   - the fixed 3-sigma threshold is not calibrated to an alert budget.
  *
  * Runs inside the Chainlink Decentralized Oracle Network (DON).
  * Receives: args[0] = meterId  (e.g. "METER_GR_001")

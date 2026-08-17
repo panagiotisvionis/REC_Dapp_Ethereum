@@ -141,26 +141,28 @@ def literature_params() -> dict:
     """
     params = {"Solar": {}, "Wind": {}, "Hydro": {}}
 
-    # Solar: Gaussian centred at 10:00 UTC (12:00 EET) with σ=4h
+    # Solar: half-sine clear-sky model over the Greek daylight envelope in UTC.
+    # Peak falls at the window midpoint, 10.5 UTC = solar noon for Greece
+    # (19.4-28.2 E => 10.1-10.7 UTC). Matches auditor.js::productionCurve.
     for h in range(24):
-        if h < 5 or h > 20:
+        if h < 4 or h > 17:
             mean, std = 0.0, 0.0
         else:
-            intensity = np.exp(-0.5 * ((h - 10) / 4.0) ** 2)
+            intensity = np.sin(np.pi * (h - 4) / (17 - 4))
             mean = round(2000 * intensity, 2)
             std  = round(max(30, 150 * intensity), 2)
         params["Solar"][h] = {"mean": mean, "std": std}
 
-    # Wind: approximately flat with diurnal variation, higher at night
+    # Wind: mild diurnal cycle, 24 h periodic (continuous across midnight)
     for h in range(24):
-        base  = 0.68 + 0.32 * np.sin(h / 3.0)
+        base  = 1 + 0.15 * np.sin(2 * np.pi * (h - 6) / 24)
         mean  = round(3500 * base, 2)
         std   = round(400  * (0.7 + 0.3 * base), 2)
         params["Wind"][h] = {"mean": mean, "std": std}
 
     # Hydro: very stable (reservoir controlled dispatch)
     for h in range(24):
-        base = 0.82 + 0.18 * np.sin(h / 4.0)
+        base = 1 + 0.05 * np.sin(2 * np.pi * (h - 8) / 24)
         mean = round(1800 * base, 2)
         std  = round(100  * base, 2)
         params["Hydro"][h] = {"mean": mean, "std": std}

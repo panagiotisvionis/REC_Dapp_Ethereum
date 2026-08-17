@@ -4,7 +4,7 @@ Gas price: 30 gwei | ETH/USD: $3200
 
 Function                           Gas Used   Cost (USD)   Note
 --------------------------------------------------------------------------------
-deploy                              3995268    $383.5457   (one-time)
+deploy                              3995280    $383.5469   (one-time)
 grantRole                             51513      $4.9452   
 setFunctionsSource                   160203     $15.3795   (151b source)
 setDonConfig                          51796      $4.9724   

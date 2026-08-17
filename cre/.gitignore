@@ -1,0 +1,6 @@
+# Local environment and CRE build artefacts.
+*.env
+.env
+node_modules/
+.cre_build_tmp.*
+dist/

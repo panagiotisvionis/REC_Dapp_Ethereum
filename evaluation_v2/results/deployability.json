@@ -1,0 +1,37 @@
+[
+  {
+    "detector": "RecChain z-score",
+    "bytes": 112,
+    "deps": "none",
+    "fitted_model": "no",
+    "us_per_decision": 13.423477800097317
+  },
+  {
+    "detector": "EWMA control chart",
+    "bytes": 192,
+    "deps": "none",
+    "fitted_model": "no",
+    "us_per_decision": 23.309739749674918
+  },
+  {
+    "detector": "Tukey IQR fence",
+    "bytes": 190,
+    "deps": "none",
+    "fitted_model": "no",
+    "us_per_decision": 4.2071126503287815
+  },
+  {
+    "detector": "Robust z (median/MAD)",
+    "bytes": 192,
+    "deps": "none",
+    "fitted_model": "no",
+    "us_per_decision": 9.775380750215845
+  },
+  {
+    "detector": "Isolation Forest",
+    "bytes": null,
+    "deps": "scikit-learn, numpy, scipy",
+    "fitted_model": "yes",
+    "us_per_decision": 239334.05048999703
+  }
+]

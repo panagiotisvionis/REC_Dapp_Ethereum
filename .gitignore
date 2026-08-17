@@ -4,3 +4,8 @@ node_modules/
 build/
 client/dist/
 client/.env.local
+artifacts/
+cache/
+coverage/
+coverage.json
+build/

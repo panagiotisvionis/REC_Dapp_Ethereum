@@ -1,7 +1,32 @@
 # RecChain — Developer Guide
 
-> Renewable Energy Certificate (REC) Platform with AI Auditor, Chainlink Oracle, and ESG Intelligence  
-> Stack: Solidity · OpenZeppelin v5 · Chainlink Functions · Hardhat · Truffle · Express.js · ethers.js v6 · React 18 · Vite
+> Renewable Energy Certificate (REC) Platform with statistical screening, oracle-gated issuance, and ESG reporting
+> Stack: Solidity · OpenZeppelin v5 · Hardhat · Truffle · Express.js · ethers.js v6 · React 18 · Vite
+> Oracle: Chainlink Functions (legacy, withdrawn) → Chainlink Runtime Environment (revised)
+
+---
+
+## ⚠ Read this first: two issuance paths
+
+This repository contains **two** oracle-mediated issuance implementations. They are not
+interchangeable, and most of this guide documents the first.
+
+| | **Legacy path** | **Revised path** |
+|---|---|---|
+| Platform | Chainlink Functions | Chainlink Runtime Environment (CRE) |
+| Screening statistic | rolling z-score, fixed 3-sigma | EWMA, `lambda* = 0.5` |
+| Threshold | fixed sigma multiple | calibrated to an explicit alert rate |
+| History source | supplied by the meter endpoint | fetched raw, computed in-workflow |
+| Missing history | test skipped (fail-open) | issuance rejected (fail-closed) |
+| Files | `functions/source.js`, `contracts/RecDapp.sol` | `cre/screening/main.ts`, `contracts/RecDappCRE.sol` |
+| Status | deployed on Sepolia; **Chainlink Functions was withdrawn in June 2026**, so this path can no longer execute | implemented, unit-tested (9/9 + 11/11), **passing local CRE simulation** (CLI v1.30.0); **not deployed to a CRE registry** |
+
+**Everything in this guide describes the legacy path unless a section says otherwise.**
+Sections 1, 6, 9 and 12 are marked accordingly. The contract, marketplace, retirement
+and public-verification paths are unaffected by the withdrawal and remain live.
+
+All empirical results in the accompanying manuscript characterise the **legacy** path.
+The revised path acts on those results; no measurement derives from it.
 
 ---
 
@@ -18,7 +43,7 @@
 9. [AI Energy Auditor](#9-ai-energy-auditor)
 10. [Frontend (React + Vite)](#10-frontend-react--vite)
 11. [Demo Mode](#11-demo-mode)
-12. [Chainlink Functions Oracle](#12-chainlink-functions-oracle)
+12. [Oracle Issuance — Legacy (Functions) and Revised (CRE)](#12-oracle-issuance)
 13. [Scripts Reference](#13-scripts-reference)
 14. [API Reference](#14-api-reference)
 15. [Production Deployment](#15-production-deployment)
@@ -43,13 +68,14 @@
 ┌────────────────────────▼────────────────────────────────┐
 │              RecDapp.sol  (EVM Smart Contract)           │
 │  ERC-1155 · AccessControl · ReentrancyGuard             │
-│  FunctionsClient (Chainlink)                            │
+│  FunctionsClient (Chainlink)  ← LEGACY path only        │
 └──────────────────────┬──────────────────────────────────┘
-                       │  Chainlink Functions v1_0_0
+                       │  Chainlink Functions v1_0_0  [LEGACY: withdrawn 06/2026]
 ┌──────────────────────▼──────────────────────────────────┐
-│          Chainlink DON (Decentralised Oracle Network)    │
+│   Chainlink DON  —  LEGACY, Functions withdrawn 06/2026  │
 │  Fetches IoT meter reading → runs JS anomaly check      │
 │  → calls fulfillRequest() back on-chain                 │
+│  REVISED: CRE workflow → signed report → RecDappCRE      │
 └──────────────────────┬──────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────┐
@@ -64,12 +90,20 @@
 Mode A (Manual):
   Issuer → issueRec() → ERC-1155 mint → RecIssued event
 
-Mode B (Oracle):
+Mode B (Oracle) — LEGACY, Chainlink Functions, withdrawn June 2026:
   Issuer → requestAutoIssuance()
         → Chainlink DON fetches meter data
-        → JS source: 3-sigma anomaly check
+        → JS source: 3-sigma check against moments supplied by the same endpoint
         → fulfillRequest() called on-chain
         → if kWh ≥ 1 000 → _issueRec() → ERC-1155 mint
+
+Mode C (Oracle) — REVISED, Chainlink Runtime Environment, not yet executed:
+  Cron trigger → CRE workflow (cre/screening/main.ts)
+        → fetches current reading AND raw trailing history
+        → computes EWMA level in-workflow (lambda* = 0.5)
+        → rejects if |score| exceeds the calibrated alert threshold
+        → fails closed when history cannot be established
+        → signed report → RecDappCRE.onReport() → issueFromWorkflow() → mint
 ```
 
 ### Token model
@@ -95,7 +129,7 @@ Mode B (Oracle):
 | `pdfkit` | ^0.18.0 | Carbon Passport PDF generation |
 | `qrcode` | ^1.5.4 | QR code generation (server-side for PDF) |
 | `@openzeppelin/contracts` | ^5.6.1 | ERC-1155, AccessControl, ReentrancyGuard |
-| `@chainlink/contracts` | ^1.5.0 | FunctionsClient, FunctionsRequest |
+| `@chainlink/contracts` | ^1.5.0 | FunctionsClient, FunctionsRequest (LEGACY path only) |
 | `@truffle/hdwallet-provider` | ^2.1.15 | Truffle deployment signer |
 | `hardhat` | ^2.28.6 | Local Ethereum node (dev only) |
 
@@ -353,7 +387,7 @@ RecDapp
   ├── ERC1155Holder    (OpenZeppelin v5) — allows contract to hold tokens (marketplace escrow)
   ├── AccessControl    (OpenZeppelin v5) — role-based permissions
   ├── ReentrancyGuard  (OpenZeppelin v5) — prevents re-entrancy on buyRec
-  └── FunctionsClient  (Chainlink v1_0_0) — oracle request/response
+  └── FunctionsClient  (Chainlink v1_0_0) — oracle request/response  [LEGACY: Functions withdrawn]
 ```
 
 ### Roles
@@ -414,7 +448,7 @@ mapping(address => mapping(uint256 => uint256)) public retiredBy;
 bytes32 public donId;
 uint64  public subscriptionId;
 uint32  public callbackGasLimit = 300_000;
-string  public functionsSource;
+string  public functionsSource;   // LEGACY: unused by the revised CRE path
 mapping(bytes32 => PendingIssuance) private _pendingIssuances;
 ```
 
@@ -426,13 +460,13 @@ mapping(bytes32 => PendingIssuance) private _pendingIssuances;
 - Stores `RecMetadata`, sets `expiresAt = now + 365 days`
 - Emits: `RecIssued`
 
-#### `requestAutoIssuance(producer, source, location, meterId)` → `requestId`
+#### `requestAutoIssuance(producer, source, location, meterId)` → `requestId` — LEGACY
 - Requires: `ISSUER_ROLE`, `functionsSource` set, `subscriptionId` set
-- Builds a Chainlink Functions request with `meterId` as argument
+- Builds a Chainlink Functions request with `meterId` as argument (LEGACY; see §12.2 for the CRE replacement)
 - Stores `PendingIssuance` mapped by `requestId`
 - Emits: `OracleRequestSent`
 
-#### `fulfillRequest(requestId, response, err)` (internal, called by Chainlink)
+#### `fulfillRequest(requestId, response, err)` (internal, called by Chainlink) — LEGACY
 - Decodes `response` as `uint256 kwh`
 - If `kwh >= 1000` → calls `_issueRec()` → mints tokens
 - `dataHash` set to `"oracle://meterId"`
@@ -517,7 +551,7 @@ npm run truffle -- migrate --network amoy --reset
 const RecDapp = artifacts.require('RecDapp');
 
 module.exports = async function(deployer, network) {
-  // Chainlink Functions Router addresses
+  // Chainlink Functions Router addresses (LEGACY: service withdrawn 06/2026)
   const ROUTERS = {
     sepolia:     '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0',
     amoy:        '0xC22a79eBA640940ABB6dF0f7982cc119578E11De',
@@ -689,6 +723,18 @@ const confidence = cv < 0.2 ? 90 : cv < 0.4 ? 78 : cv < 0.6 ? 62 : 48;
 Possible causes are source-specific: solar has cloud cover / inverter causes, wind has turbine mechanical / curtailment.
 
 ### Module 2 — Fraud Detection
+
+> **Note on the statistic.** The z-score below is the statistic that was implemented
+> and empirically evaluated. On measured generation data an exponentially weighted
+> control chart outperforms it at every anomaly prevalence tested, so the revised CRE
+> workflow (`cre/screening/main.ts::ewmaStats`) uses EWMA with `lambda* = 0.5`, selected on a
+> chronological calibration split. The z-score is retained here as the parameter-free
+> baseline and as what the server-side monitoring module still computes.
+>
+> The fixed threshold below is likewise superseded: a sigma multiple is calibrated for
+> one prevalence and loses most of its precision away from it. The revised design takes
+> its threshold from an explicit alert budget estimated on a separate reference corpus,
+> not from the 30-sample detection window.
 
 Statistical anomaly scoring using z-score and the standard normal CDF:
 
@@ -891,21 +937,44 @@ DEMO_MONTHLY      // Array<{ month, production, retired, co2 }> (6 months)
 
 ---
 
-## 12. Chainlink Functions Oracle
+## 12. Oracle Issuance
 
-### How it works
+Two implementations exist. Section 12.1 documents the one that was built, deployed and
+evaluated; its platform has since been withdrawn. Section 12.2 documents the revision.
 
-1. Admin calls `setFunctionsSource(jsSourceCode)` — stores the JavaScript that will run in the DON
-2. Admin calls `setDonConfig(donId, subscriptionId, callbackGasLimit)`
-3. Issuer calls `requestAutoIssuance(producer, source, location, meterId)`
-4. Chainlink DON executes the JS off-chain, passing `meterId` as argument
-5. DON calls `fulfillRequest(requestId, encodedKwh, err)` on-chain
+### 12.1 Legacy — Chainlink Functions (withdrawn June 2026)
+
+> **This path can no longer execute.** Chainlink withdrew Functions on 15 June 2026
+> (testnets) and 30 June 2026 (mainnet). The code is retained because it is the
+> implementation the manuscript evaluates and the baseline the revision is measured
+> against. Do not build on it.
+
+#### How it worked
+
+1. Admin called `setFunctionsSource(jsSourceCode)` — stored the JavaScript run in the DON
+2. Admin called `setDonConfig(donId, subscriptionId, callbackGasLimit)`
+3. Issuer called `requestAutoIssuance(producer, source, location, meterId)`
+4. The DON executed the JS off-chain, passing `meterId` as argument
+5. The DON called `fulfillRequest(requestId, encodedKwh, err)` on-chain
 6. If `kwh >= 1000` → tokens minted
 
-### Chainlink Functions JS source (runs in DON)
+#### Known defects, repaired in the revision
+
+These are reported in the manuscript and are the reason the revision is not a
+transcription of this design:
+
+- **Self-referential moments.** `historical_mean` and `historical_std` arrived in the
+  *same* response as the reading under test, so an adversary controlling the endpoint
+  could return a mutually consistent triple and satisfy the gate.
+- **Fail-open.** When either moment was absent the check was skipped, not failed.
+- **Uncalibrated threshold.** A fixed sigma multiple, not an alert budget.
+- **Silent rejection.** A sub-floor volume terminated the callback with no outcome event,
+  so the failure was invisible off-chain.
+
+#### The deployed JS source
 
 ```javascript
-// Example source stored via setFunctionsSource()
+// functions/source.js — LEGACY. See the file header for the full defect list.
 const meterId = args[0];
 const response = await Functions.makeHttpRequest({
   url: `https://your-iot-api.com/meter/${meterId}/reading`,
@@ -916,34 +985,79 @@ if (response.error) throw Error('IoT API error');
 
 const kwh = response.data.kwh;
 
-// 3-sigma anomaly check
+// 3-sigma check against moments supplied by the SAME endpoint (defect 1)
 const historical = response.data.historical_mean;
 const std        = response.data.historical_std;
 const zScore     = (kwh - historical) / std;
 
 if (Math.abs(zScore) > 4) throw Error('Anomaly detected — issuance rejected');
 
-// Return abi-encoded uint256
 return Functions.encodeUint256(Math.floor(kwh));
 ```
 
-### Configuration on Sepolia
+#### Configuration on Sepolia (historical)
 
 ```
 Functions Router: 0xb83E47C2bC239B3bf370bc41e1459A34b41238D0
 DON ID:           fun-ethereum-sepolia-1
 ```
 
-Subscription management: [functions.chain.link](https://functions.chain.link)
+### 12.2 Revised — Chainlink Runtime Environment
 
-### Oracle vs Manual issuance
+Files: `cre/screening/main.ts` (workflow), `contracts/RecDappCRE.sol` (report receiver),
+`cre/screen.test.js` (screening logic, 9/9), `test/RecDappCRE.test.js` (consumer, 11/11).
 
-| Aspect | Manual | Oracle |
-|--------|--------|--------|
-| Who triggers | Human (ISSUER_ROLE) | ISSUER_ROLE + IoT data |
-| `dataHash` | `ipfs://Qm...` | `oracle://METER_GR_001` |
-| Fraud check | None (human judgment) | 3-sigma in JS source |
-| Verifiability | PDF + IPFS | On-chain request ID + DON logs |
+#### Concept mapping from Functions
+
+| Functions | CRE |
+|---|---|
+| `functions/source.js` | TypeScript workflow compiled to WASM |
+| subscription | deployed workflow configuration |
+| DON ID | registry deployment |
+| `requestAutoIssuance()` | cron trigger, off-chain |
+| `fulfillRequest()` callback | signed report → `RecDappCRE.onReport()` |
+| one request → one certificate | one report → N certificates |
+
+#### What the workflow does
+
+1. Cron trigger fires (hourly).
+2. For each configured meter, fetches the current reading **and the raw trailing
+   same-hour history** — two separate requests.
+3. Computes the EWMA level in-workflow (`ewmaStats`, `lambda* = 0.5`). The endpoint no
+   longer supplies its own reference moments.
+4. Rejects if `|score|` exceeds `zThreshold`, which is supplied in the workflow
+   configuration from an alert budget calibrated offline. **It must not be derived from
+   the 30-sample window**: thirty observations resolve a quantile no finer than ~1/30,
+   so a 1% alert target is not estimable from it.
+5. **Fails closed** on any path where the history cannot be established — endpoint
+   unavailable, short history, hour mismatch.
+6. Emits one signed report for all meters that passed; `RecDappCRE.onReport()` decodes
+   it, checks the meter binding and the 1 MWh floor, and emits `IssuanceAccepted` or
+   `IssuanceRejected` for each. Rejections are **never** silent.
+
+#### Status
+
+Implemented and unit-tested. **Not executed in the CRE runtime.** To run the official
+local simulation you need CRE credentials:
+
+```bash
+export CRE_API_KEY=<your key>          # or: cre login
+cre workflow simulate ./recchain-cre
+```
+
+Until that passes, do not describe this path as runtime-validated, and do not claim
+CRE latency or production behaviour.
+
+### Manual vs oracle issuance
+
+| Aspect | Manual | Oracle (legacy) | Oracle (revised) |
+|--------|--------|-----------------|------------------|
+| Who triggers | Human (ISSUER_ROLE) | ISSUER_ROLE + IoT data | Cron + IoT data |
+| Provenance field | `ipfs://Qm...` | `oracle://METER_GR_001` | `cre://METER_GR_001` |
+| Screening | None (human judgment) | 3-sigma, endpoint-supplied moments | EWMA, in-workflow moments, calibrated threshold |
+| Missing history | n/a | test skipped | issuance rejected |
+| Rejection visibility | n/a | silent below floor | event per meter |
+| Verifiability | PDF + IPFS | on-chain request ID + DON logs | signed report + consumer events |
 
 ---
 
@@ -1141,7 +1255,12 @@ FRONTEND_URL=https://recchain.yourdomain.com
 | Ganache incompatible with Node v24 | Missing `µWS` binary for ARM/Node24 | Use `npx hardhat node` instead |
 | Hardhat v3 requires ESM | Project uses CommonJS (`require()`) | Install Hardhat v2 (`hardhat@^2`) |
 | `invalid opcode` on Truffle migrate | OpenZeppelin v5 uses `mcopy` (Cancun only) | Add `evmVersion: 'cancun'` to both Hardhat and Truffle configs |
+| Solar peak at 13:00 UTC | Solar noon for Greece is 10:07–10:43 UTC; 13:00 is plausible as *local* time | `auditor.js::productionCurve` now uses a half-sine profile over the daylight envelope [4,17] UTC, peaking at 10.5 UTC. Confirmed against measured OPSD data (peak at hour 10) |
 | Nonce conflicts on seed script | ethers.js caches nonces; Hardhat automines | Wrap wallet in `new ethers.NonceManager(wallet)` |
 | `@contracts` alias fails on Vercel | Truffle artifact in `../build/` not uploaded | Created ABI-only `client/src/contracts/RecDapp.json` (18KB) |
 | Web3Context forced Sepolia switch | Hardcoded chain ID | Read `TARGET_CHAIN_ID` from `VITE_CHAIN_ID` env var |
 | AIAuditor white screen | `/api/audit/summary` returns flat `opStatus`, detail returns nested | Use `??` fallback: `report.opStatus ?? report.operational?.status` |
+| Chainlink Functions withdrawn | Service sunset 15/06/2026 (testnets), 30/06/2026 (mainnet) | Migrated to CRE: `cre/screening/main.ts` + `contracts/RecDappCRE.sol`. Legacy path retained for reproducibility of the published evaluation (§12.1) |
+| Fixed 3-sigma gate mis-calibrated | A sigma multiple is calibrated for one anomaly prevalence and loses most of its precision away from it | Threshold now set from an explicit alert budget, estimated on a reference corpus, **not** on the 30-sample detection window (§12.2) |
+| z-score outperformed on real data | Flat 30-day mean discards day-to-day persistence in generation | Revised workflow uses EWMA, `lambda* = 0.5` selected on a chronological calibration split (`evaluation_v2/calibration.py`) |
+| Oracle screening mistaken for authentication | Current reading and history come from the same reporting interface | Documented as a data-quality control, not authentication. Open assumption; see manuscript §5.3 |

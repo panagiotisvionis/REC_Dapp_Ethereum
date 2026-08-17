@@ -1,0 +1,18 @@
+{
+  "far": {
+    "RecChain z-score (rolling)": 39.166666666666664,
+    "Robust z (median/MAD)": 135.5,
+    "Tukey IQR fence": 101.56666666666666,
+    "EWMA control chart": 22.1,
+    "Isolation Forest": 79.16666666666667
+  },
+  "T": 480.08826985001883,
+  "p_far": 0.0,
+  "control": "EWMA control chart",
+  "finner": {
+    "Robust z (median/MAD)": 0.0,
+    "Tukey IQR fence": 2.7982061112652445e-12,
+    "Isolation Forest": 4.843432895862421e-07,
+    "RecChain z-score (rolling)": 0.12815294911570074
+  }
+}

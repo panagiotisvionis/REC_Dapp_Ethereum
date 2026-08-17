@@ -1,6 +1,31 @@
 
 # Renewable Energy Certificates (RECs) dApp on Ethereum
 
+> ## Status of the issuance path
+>
+> This repository contains **two** oracle-mediated issuance implementations. They
+> are not interchangeable and the distinction matters when reading the
+> accompanying manuscript.
+>
+> | Path | Location | Statistic | Status |
+> |---|---|---|---|
+> | **Legacy (evaluated)** | `functions/source.js`, `contracts/RecDapp.sol` | rolling z-score, fixed 3-sigma | Deployed on Sepolia; **Chainlink Functions was withdrawn in June 2026**, so this path can no longer execute |
+> | **Revised** | `cre/screening/main.ts`, `contracts/RecDappCRE.sol` | EWMA, lambda*=0.5, separately calibrated alert threshold | Implemented, unit-tested (9/9 + 11/11), and **passing local CRE simulation** (CLI v1.30.0); **not deployed to a CRE registry** |
+>
+> All empirical results reported in the manuscript characterise the **legacy**
+> path. The revised path acts on those results; no measurement derives from it.
+> The contract, marketplace, retirement and public verification paths are
+> unaffected by the withdrawal and remain live.
+>
+> ## Security
+>
+> A `.env` file containing live credentials, including a wallet mnemonic and an
+> issuer private key, was committed to this repository's history. Deleting the
+> file does not undo the exposure. Those credentials must be rotated and the
+> corresponding on-chain role revoked. Use `.env.example` as the template; never
+> commit `.env`.
+
+
 This repository contains a decentralized application (dApp) for managing Renewable Energy Certificates (RECs) on the Ethereum blockchain. The application allows users to issue, verify, request, and sell RECs using smart contracts. Below you'll find an overview of the smart contract, setup instructions, and usage examples.
 
 ## Usage

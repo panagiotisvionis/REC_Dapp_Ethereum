@@ -23,14 +23,26 @@ function seededRnd(seed) {
   return x - Math.floor(x);
 }
 
+// Daylight envelope for Greece (~38 N): annual-average sunrise/sunset in UTC.
+// The midpoint, 10.5 UTC, is solar noon for the Greek longitude range
+// (19.4-28.2 E => 10.1-10.7 UTC). Greece observes UTC+2 (EET) / UTC+3 (EEST),
+// so local solar noon near 13:00 corresponds to ~10:30 UTC, not 13:00 UTC.
+const SOLAR_SUNRISE_UTC = 4;
+const SOLAR_SUNSET_UTC  = 17;
+
 function productionCurve(source, hourUTC) {
   if (source === 'Solar') {
-    if (hourUTC < 5 || hourUTC > 21) return 0;
-    const h = (hourUTC - 13) / 5;
-    return Math.exp(-0.5 * h * h);
+    if (hourUTC < SOLAR_SUNRISE_UTC || hourUTC > SOLAR_SUNSET_UTC) return 0;
+    // Half-sine clear-sky model: zero at sunrise and sunset, peak at solar noon.
+    return Math.sin(Math.PI * (hourUTC - SOLAR_SUNRISE_UTC) /
+                    (SOLAR_SUNSET_UTC - SOLAR_SUNRISE_UTC));
   }
-  // Wind + Hydro: fairly flat with slight variance
-  return 0.7 + 0.3 * Math.sin(hourUTC / 3);
+  if (source === 'Wind') {
+    // Mild diurnal cycle, 24 h periodic (continuous across the day boundary).
+    return 1 + 0.15 * Math.sin(2 * Math.PI * (hourUTC - 6) / 24);
+  }
+  // Hydro: reservoir-buffered, almost flat.
+  return 1 + 0.05 * Math.sin(2 * Math.PI * (hourUTC - 8) / 24);
 }
 
 function simulateDay(meter, daySeed, dayOffset = 0) {

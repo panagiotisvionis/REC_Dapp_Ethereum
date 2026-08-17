@@ -39,8 +39,10 @@
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.1.2",
     "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "hardhat": "^2.28.6",
-    "hardhat-gas-reporter": "^2.3.0"
+    "hardhat-gas-reporter": "^2.3.0",
+    "solidity-coverage": "^0.8.17"
   }
 }
