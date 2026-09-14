@@ -10,7 +10,7 @@
 > | Path | Location | Statistic | Status |
 > |---|---|---|---|
 > | **Legacy (evaluated)** | `functions/source.js`, `contracts/RecDapp.sol` | rolling z-score, fixed 3-sigma | Deployed on Sepolia; **Chainlink Functions was withdrawn in June 2026**, so this path can no longer execute |
-> | **Revised** | `cre/screening/main.ts`, `contracts/RecDappCRE.sol` | EWMA, lambda*=0.5, separately calibrated alert threshold | Implemented, unit-tested (9/9 + 11/11), and **passing local CRE simulation** (CLI v1.30.0); **not deployed to a CRE registry** |
+> | **Revised** | `cre/screening/main.ts`, `contracts/RecDappCRE.sol`, `contracts/RecDappWorkflowRegistry.sol` | EWMA, lambda*=0.5, separately calibrated alert threshold | Implemented, unit-tested (9/9 + 11/11), and **passing local CRE simulation** (CLI v1.30.0); **not deployed to a CRE registry** |
 >
 > All empirical results reported in the manuscript characterise the **legacy**
 > path. The revised path acts on those results; no measurement derives from it.

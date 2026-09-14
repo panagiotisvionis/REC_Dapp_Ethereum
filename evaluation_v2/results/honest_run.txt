@@ -6,7 +6,7 @@ Detector                          Precision         Recall             F1       
 RecChain z-score (rolling)      0.826+-0.003    0.826+-0.003    0.826+-0.003   0.897+-0.002
 Robust z (median/MAD)           0.454+-0.007    0.454+-0.007    0.454+-0.007   0.448+-0.003
 Tukey IQR fence                 0.828+-0.003    0.765+-0.003    0.795+-0.003   0.817+-0.005
-EWMA control chart              0.831+-0.003    0.831+-0.003    0.831+-0.003   0.897+-0.002
+EWMA residual score             0.831+-0.003    0.831+-0.003    0.831+-0.003   0.897+-0.002
 Isolation Forest                0.806+-0.003    0.806+-0.003    0.806+-0.003   0.864+-0.003
 
   RecChain z-score — threshold sweep (mean +- 95% CI over seeds)
@@ -25,4 +25,4 @@ Isolation Forest                0.806+-0.003    0.806+-0.003    0.806+-0.003   0
     sensor_stuck           88.5% +- 0.5
     zero_reading           89.7% +- 0.7
 
-  Written -> /home/lysos/Desktop/Panagiotis/papers/RecChain/evaluation_v2/results/honest_evaluation.json
+  Written -> /home/lysos/Desktop/Panagiotis/Projects/REC_Dapp_Ethereum/evaluation_v2/results/honest_evaluation.json

@@ -1,0 +1,10 @@
+(a) whole series, matched budget, EWMA lambda=0.3, 30 replications
+   0.5%  dF1=+0.0255  95% CI [+0.0210, +0.0299]  EWMA higher 30/30  Wilcoxon p=1.72e-06  range [+0.004,+0.052]
+     1%  dF1=+0.0338  95% CI [+0.0299, +0.0377]  EWMA higher 30/30  Wilcoxon p=1.72e-06  range [+0.015,+0.060]
+     5%  dF1=+0.0362  95% CI [+0.0347, +0.0377]  EWMA higher 30/30  Wilcoxon p=1.72e-06  range [+0.028,+0.043]
+    10%  dF1=+0.0457  95% CI [+0.0445, +0.0469]  EWMA higher 30/30  Wilcoxon p=1.73e-06  range [+0.038,+0.053]
+(b) chronological test period, EWMA lambda*=0.5, 12 replications
+   0.5%  reproduces calibration.json: True  dF1=+0.0332  95% CI [+0.0210, +0.0453]  EWMA higher 11/12  Wilcoxon p=9.77e-04
+     1%  reproduces calibration.json: True  dF1=+0.0363  95% CI [+0.0305, +0.0421]  EWMA higher 12/12  Wilcoxon p=4.88e-04
+     5%  reproduces calibration.json: True  dF1=+0.0495  95% CI [+0.0435, +0.0555]  EWMA higher 12/12  Wilcoxon p=4.88e-04
+    10%  reproduces calibration.json: True  dF1=+0.0556  95% CI [+0.0528, +0.0584]  EWMA higher 12/12  Wilcoxon p=4.88e-04

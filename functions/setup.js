@@ -20,7 +20,7 @@ require('dotenv').config();
 const { ethers } = require('ethers');
 const fs         = require('fs');
 const path       = require('path');
-const artifact   = require('../build/contracts/RecDapp.json');
+const artifact   = require('../server/lib/artifact').loadRecDappArtifact();
 
 // Sepolia Chainlink Functions constants
 const SEPOLIA_DON_ID = ethers.encodeBytes32String('fun-ethereum-sepolia-1');

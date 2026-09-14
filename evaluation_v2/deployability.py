@@ -49,7 +49,7 @@ if s<1: s=1
 d=abs((x-m)/s)>=2.5
 """,
 
-"EWMA control chart": """
+"EWMA residual score": """
 lam=0.3; num=0.0; den=0.0
 for i,v in enumerate(w):
     q=lam*(1-lam)**(len(w)-1-i); num+=q*v; den+=q
@@ -84,7 +84,7 @@ d=abs((x-med)/s)>=2.5
 
 DEPS = {
     "RecChain z-score":       ("none", "no"),
-    "EWMA control chart":     ("none", "no"),
+    "EWMA residual score":    ("none", "no"),
     "Tukey IQR fence":        ("none", "no"),
     "Robust z (median/MAD)":  ("none", "no"),
     "Isolation Forest":       ("scikit-learn, numpy, scipy", "yes"),

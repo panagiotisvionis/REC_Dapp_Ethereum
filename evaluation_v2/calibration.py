@@ -45,6 +45,9 @@ def main():
     solar = srcs == "Solar"
     night = ER.solar_elevation(list(dates), hours.astype(float)) < -6.0
     cap = np.maximum(np.array([w.max() for w in wins]), 1.0)
+    # As in evaluate_real.py, the 99th percentile covers the whole series,
+    # including the test period. It sets only the magnitude of injected
+    # night-time anomalies; lambda selection and thresholds never read it.
     for nm in np.unique(srcs):
         m = srcs == nm
         cap[m] = np.maximum(cap[m], np.percentile(values[m], 99))

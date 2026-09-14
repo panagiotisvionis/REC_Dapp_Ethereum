@@ -1,5 +1,5 @@
 const { ethers } = require('ethers');
-const artifact    = require('../../build/contracts/RecDapp.json');
+const artifact    = require('./artifact').loadRecDappArtifact();
 
 let _provider = null;
 let _contract  = null;

@@ -1,0 +1,13 @@
+(1) Fig. 4: largest 95% CI half-width over the sweep = 0.0057
+(2) Issuance gas spread across 1/5/100 MWh: 0.03% (+-36 gas)
+      1 MWh batch: $21.319/MWh at 30 gwei = 7.11 x REC value; 1% threshold = 0.0422 gwei
+      5 MWh batch: $4.264/MWh at 30 gwei = 1.42 x REC value; 1% threshold = 0.2111 gwei
+    100 MWh batch: $0.213/MWh at 30 gwei = 0.07 x REC value; 1% threshold = 4.2226 gwei
+    lifecycle gas = 597,622
+       30 gwei: issuance $21.3195  lifecycle $57.3717
+        5 gwei: issuance $3.5532  lifecycle $9.5620
+        1 gwei: issuance $0.7106  lifecycle $1.9124
+      0.1 gwei: issuance $0.0711  lifecycle $0.1912
+     0.05 gwei: issuance $0.0355  lifecycle $0.0956
+     0.01 gwei: issuance $0.0071  lifecycle $0.0191
+  Written -> /home/lysos/Desktop/Panagiotis/Projects/REC_Dapp_Ethereum/evaluation_v2/results/derived_values.json

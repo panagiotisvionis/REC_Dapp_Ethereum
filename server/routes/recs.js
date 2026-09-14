@@ -1,6 +1,8 @@
 const { Router }                                    = require('express');
 const { getContract, getSignerContract, serializeMeta } = require('../lib/contract');
 const { generatePassport }                          = require('../lib/passport');
+const { resolveProvenance }                         = require('../lib/provenance');
+const { ethers }                                    = require('ethers');
 
 const router = Router();
 
@@ -38,7 +40,20 @@ router.get('/:tokenId/passport', async (req, res) => {
     }
 
     const appBaseUrl = process.env.APP_BASE_URL || 'http://localhost:5173';
-    const pdf = await generatePassport(req.params.tokenId, serializeMeta(meta), remaining, appBaseUrl);
+    // Provenance is decided from the issuer field and, on a workflow registry,
+    // from issuedByWorkflow(); the evaluated RecDapp has no such view, so a
+    // failed call is treated as false.
+    const metadata = serializeMeta(meta);
+    let issuedByWorkflow = false;
+    try {
+      const view = new ethers.Contract(await rec.getAddress(),
+        ['function issuedByWorkflow(uint256) view returns (bool)'], rec.runner);
+      issuedByWorkflow = await view.issuedByWorkflow(id);
+    } catch (_) { issuedByWorkflow = false; }
+    const provenance = resolveProvenance(metadata,
+      { registryAddress: await rec.getAddress(), issuedByWorkflow });
+
+    const pdf = await generatePassport(req.params.tokenId, metadata, remaining, appBaseUrl, provenance);
 
     const disposition = req.query.download === '1'
       ? `attachment; filename="REC-${req.params.tokenId}-passport.pdf"`

@@ -2,7 +2,7 @@ require('dotenv').config();
 const Web3             = require('web3');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const contract         = require('@truffle/contract');
-const RecDappArtifact  = require('./build/contracts/RecDapp.json');
+const RecDappArtifact  = require('./server/lib/artifact').loadRecDappArtifact();
 
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || '0x113b2333e8De598240F627CE3592eA2D78e0d0aB';
 

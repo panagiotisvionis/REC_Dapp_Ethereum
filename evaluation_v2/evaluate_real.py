@@ -163,7 +163,7 @@ def s_iforest(v, w, night, solar, seed=0):
 
 DETECTORS = {
     "RecChain z-score (rolling)": s_z,
-    "EWMA control chart":         s_ewma,
+    "EWMA residual score":        s_ewma,
     "Isolation Forest":           s_iforest,
     "Tukey IQR fence":            s_iqr,
     "Robust z (median/MAD)":      s_robust,
@@ -197,6 +197,10 @@ def main():
     # 30 days for that installation, available to a stateless workflow.
     cap = np.array([w.max() for w in wins])
     cap = np.maximum(cap, 1.0)
+    # The 99th percentile is taken over the whole analysis window, so it uses
+    # observations from the later reporting period as well. It only scales the
+    # magnitude of injected night-time generation; no detector, threshold or
+    # parameter selection reads it.
     for name in np.unique(srcs):                 # per-source daily maximum
         m = srcs == name
         cap[m] = np.maximum(cap[m], np.percentile(values[m], 99))
@@ -220,8 +224,12 @@ def main():
                      else fn(v, wins, is_night, solar)
                 # Two regimes, reported separately because the gap between
                 # them is itself the operational finding.
-                #   fixed   : the gate as deployed, a sigma multiple that does
-                #             not move with prevalence
+                #   fixed   : a threshold that does not move with prevalence:
+                #             2.5 sigma for the sigma-based scores (the
+                #             monitoring band of the evaluated implementation,
+                #             not its 3-sigma issuance gate), the 1.5 IQR fence
+                #             for Tukey, and the matched budget for the
+                #             isolation forest, which has no sigma scale
                 #   budget  : threshold set so the alarm rate equals the
                 #             anomaly rate, which is the like-for-like
                 #             comparison between detectors

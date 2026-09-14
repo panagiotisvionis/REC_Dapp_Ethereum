@@ -2,7 +2,7 @@
   Friedman Aligned-Ranks — 5 detectors x 30 replications (F1 score)
 ==========================================================================
 Detector                             FAR     mean F1
-EWMA control chart                 22.10      0.8312
+EWMA residual score                22.10      0.8312
 RecChain z-score (rolling)         39.17      0.8256
 Isolation Forest                   79.17      0.8057
 Tukey IQR fence                   101.57      0.7952
@@ -10,7 +10,7 @@ Robust z (median/MAD)             135.50      0.4535
 
   FAR statistic T = 480.088, df = 4, p = 0.000e+00
 
-  Finner post hoc (control = EWMA control chart, alpha = 0.05)
+  Finner post hoc (control = EWMA residual score, alpha = 0.05)
   Comparison                           z           p    p_Finner   H0
   Robust z (median/MAD)           10.109   0.000e+00   0.000e+00   Reject
   Tukey IQR fence                  7.084   1.399e-12   2.798e-12   Reject

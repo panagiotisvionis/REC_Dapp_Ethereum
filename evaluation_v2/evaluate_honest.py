@@ -207,7 +207,7 @@ DETECTORS = {
     "RecChain z-score (rolling)": score_zscore,
     "Robust z (median/MAD)":      score_robust_z,
     "Tukey IQR fence":            score_iqr,
-    "EWMA control chart":         score_ewma,
+    "EWMA residual score":        score_ewma,
     "Isolation Forest":           score_iforest,
 }
 

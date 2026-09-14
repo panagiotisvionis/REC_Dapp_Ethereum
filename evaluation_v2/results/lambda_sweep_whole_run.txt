@@ -1,0 +1,10 @@
+  Lambda sweep over the whole measured series (no split), 1% prevalence, seeds 4000..4011
+    lambda = 0.05  F1 = 0.5220
+    lambda = 0.1   F1 = 0.5283
+    lambda = 0.2   F1 = 0.5369
+    lambda = 0.3   F1 = 0.5426
+    lambda = 0.5   F1 = 0.5566
+    lambda = 0.7   F1 = 0.5610
+    lambda = 0.9   F1 = 0.5585
+  whole-series maximiser: lambda = 0.7
+  Written -> /home/lysos/Desktop/Panagiotis/Projects/REC_Dapp_Ethereum/evaluation_v2/results/lambda_sweep_whole.json

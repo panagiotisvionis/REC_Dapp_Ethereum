@@ -1,0 +1,55 @@
+{
+  "fig4_max_ci_halfwidth": 0.00565408099267409,
+  "gas": {
+    "gas_price_gwei": 30,
+    "eth_usd": 3200,
+    "rec_value_usd_per_mwh": 3.0,
+    "issue_gas_spread_pct": 0.032421041255774996,
+    "issue_gas_half_range": 36.0,
+    "batch_1MWh": {
+      "gas": 222078,
+      "usd_per_mwh_at_ref_gas_price": 21.319488,
+      "cost_over_value": 7.106496,
+      "gwei_threshold_for_1pct": 0.042214897468457024
+    },
+    "batch_5MWh": {
+      "gas": 222090,
+      "usd_per_mwh_at_ref_gas_price": 4.264128,
+      "cost_over_value": 1.4213760000000002,
+      "gwei_threshold_for_1pct": 0.2110630825341078
+    },
+    "batch_100MWh": {
+      "gas": 222018,
+      "usd_per_mwh_at_ref_gas_price": 0.21313728,
+      "cost_over_value": 0.07104576,
+      "gwei_threshold_for_1pct": 4.22263059751912
+    },
+    "lifecycle_gas": 597622,
+    "cost_table": {
+      "30": {
+        "issuance_usd": 21.319488,
+        "lifecycle_usd": 57.37171200000001
+      },
+      "5": {
+        "issuance_usd": 3.5532480000000004,
+        "lifecycle_usd": 9.561952
+      },
+      "1": {
+        "issuance_usd": 0.7106496,
+        "lifecycle_usd": 1.9123904
+      },
+      "0.1": {
+        "issuance_usd": 0.07106496000000001,
+        "lifecycle_usd": 0.19123904000000003
+      },
+      "0.05": {
+        "issuance_usd": 0.035532480000000005,
+        "lifecycle_usd": 0.09561952000000001
+      },
+      "0.01": {
+        "issuance_usd": 0.007106496000000001,
+        "lifecycle_usd": 0.019123904000000004
+      }
+    }
+  }
+}

@@ -17,7 +17,7 @@
  *      contract acts on the signed result.
  *   3. THE STATISTIC CHANGED. The legacy path used a flat 30-sample mean
  *      (rolling z-score). On measured generation data an exponentially
- *      weighted control chart is better at every anomaly prevalence tested, so
+ *      weighted residual score is better at every anomaly prevalence tested, so
  *      this workflow uses EWMA with lambda* = 0.5, selected on a chronological
  *      calibration split. See evaluation_v2/calibration.py.
  *   4. REJECTIONS ARE VISIBLE. The consumer contract emits an event per meter;

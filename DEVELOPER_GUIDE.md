@@ -726,7 +726,7 @@ Possible causes are source-specific: solar has cloud cover / inverter causes, wi
 
 > **Note on the statistic.** The z-score below is the statistic that was implemented
 > and empirically evaluated. On measured generation data an exponentially weighted
-> control chart outperforms it at every anomaly prevalence tested, so the revised CRE
+> residual score (EWMA) outperforms it at every anomaly prevalence tested, so the revised CRE
 > workflow (`cre/screening/main.ts::ewmaStats`) uses EWMA with `lambda* = 0.5`, selected on a
 > chronological calibration split. The z-score is retained here as the parameter-free
 > baseline and as what the server-side monitoring module still computes.
@@ -1005,7 +1005,12 @@ DON ID:           fun-ethereum-sepolia-1
 ### 12.2 Revised — Chainlink Runtime Environment
 
 Files: `cre/screening/main.ts` (workflow), `contracts/RecDappCRE.sol` (report receiver),
-`cre/screen.test.js` (screening logic, 9/9), `test/RecDappCRE.test.js` (consumer, 11/11).
+`contracts/RecDappWorkflowRegistry.sol` (registry: RecDapp plus `issueFromWorkflow`, restricted to
+`WORKFLOW_ROLE`, which the admin grants to the RecDappCRE address),
+`cre/screen.test.js` (screening logic, 9/9), `test/RecDappCRE.test.js` (consumer, 11/11),
+`test/CREIntegration.test.js` (consumer and registry together, 7/7). `RecDapp.sol` itself is unchanged.
+Carbon Passport provenance (`server/lib/provenance.js`, `node --test server/test/provenance.test.js`, 9/9)
+is decided from the issuer field and `issuedByWorkflow`, never from the `dataHash` prefix.
 
 #### Concept mapping from Functions
 

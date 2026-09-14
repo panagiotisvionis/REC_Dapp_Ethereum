@@ -1,5 +1,6 @@
 const PDFDocument = require('pdfkit');
 const QRCode      = require('qrcode');
+const { resolveProvenance } = require('./provenance');
 
 const SOURCES = ['Solar', 'Wind', 'Hydro', 'Biomass', 'Geothermal', 'Other'];
 
@@ -15,7 +16,9 @@ const BORDER = '#e5e7eb';
 const BG     = '#f9fafb';
 const WHITE  = '#ffffff';
 
-async function generatePassport(tokenId, metadata, remainingKwh, appBaseUrl) {
+// `provenance` comes from resolveProvenance(); without it the certificate is
+// shown as manually issued, since nothing on-chain has been checked.
+async function generatePassport(tokenId, metadata, remainingKwh, appBaseUrl, provenance) {
   return new Promise(async (resolve, reject) => {
     try {
       const kwh    = Number(metadata.kwh);
@@ -27,7 +30,8 @@ async function generatePassport(tokenId, metadata, remainingKwh, appBaseUrl) {
 
       const now         = Date.now() / 1000;
       const isValid     = !metadata.fullyRetired && now <= Number(metadata.expiresAt);
-      const isOracle    = (metadata.dataHash || '').startsWith('oracle://');
+      const prov        = provenance || resolveProvenance(metadata);
+      const isOracle    = prov.oracleMediated;
 
       const fmt = (ts) => new Date(Number(ts) * 1000)
         .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -99,7 +103,7 @@ async function generatePassport(tokenId, metadata, remainingKwh, appBaseUrl) {
       _row(doc, M, y, colW, 'Energy Source', source);          y += 24;
       _row(doc, M, y, colW, 'Location',      metadata.location); y += 24;
       _row(doc, M, y, colW, 'Producer',      _addr(metadata.producer)); y += 24;
-      _row(doc, M, y, colW, 'Issuer',        isOracle ? 'RecChain Oracle (Chainlink)' : _addr(metadata.issuer)); y += 32;
+      _row(doc, M, y, colW, 'Issuer',        isOracle ? `RecChain Oracle (${_addr(metadata.issuer)})` : _addr(metadata.issuer)); y += 32;
 
       // ── Production Details ────────────────────────────────────────────────
       y = _sectionHeader(doc, M, y, CW, 'PRODUCTION DETAILS');
@@ -126,7 +130,10 @@ async function generatePassport(tokenId, metadata, remainingKwh, appBaseUrl) {
       y = _sectionHeader(doc, M, y, CW, 'BLOCKCHAIN VERIFICATION');
 
       _row(doc, M, y, CW, 'Verification Method',
-           isOracle ? '✓  Oracle-verified via Chainlink Functions (off-chain computation)' : '✓  Manually issued by certified body');
+           prov.path === 'functions' ? '✓  Oracle-screened via Chainlink Functions (issuer is the registry contract)'
+         : prov.path === 'workflow'  ? '✓  Oracle-screened via CRE workflow (recorded by the registry)'
+         : prov.referenceClaimsOracle ? 'Manually issued; the data reference claims oracle issuance, but the issuer field does not confirm it'
+         : 'Manually issued by an ISSUER_ROLE holder (not screened)');
       y += 24;
       _row(doc, M, y, CW, 'Data Reference', metadata.dataHash);
       y += 24;

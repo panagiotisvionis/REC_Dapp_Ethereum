@@ -8,7 +8,7 @@
   Detector                              --- matched alarm budget ---             -- fixed threshold --
                                 Precision       Recall           F1   Precision     Recall         F1
   RecChain z-score (rolling)   0.469+-0.011   0.471+-0.011   0.470+-0.011  0.096+-0.00  0.670+-0.01  0.169+-0.00
-  EWMA control chart           0.494+-0.010   0.497+-0.010   0.496+-0.010  0.134+-0.00  0.692+-0.01  0.224+-0.00
+  EWMA residual score          0.494+-0.010   0.497+-0.010   0.496+-0.010  0.134+-0.00  0.692+-0.01  0.224+-0.00
   Isolation Forest             0.430+-0.013   0.432+-0.013   0.431+-0.013  0.430+-0.01  0.432+-0.01  0.431+-0.01
   Tukey IQR fence              0.339+-0.010   0.274+-0.008   0.303+-0.009  0.071+-0.00  0.639+-0.01  0.127+-0.00
   Robust z (median/MAD)        0.282+-0.008   0.287+-0.009   0.284+-0.008  0.049+-0.00  0.664+-0.01  0.091+-0.00
@@ -17,7 +17,7 @@
   Detector                              --- matched alarm budget ---             -- fixed threshold --
                                 Precision       Recall           F1   Precision     Recall         F1
   RecChain z-score (rolling)   0.517+-0.006   0.518+-0.006   0.518+-0.006  0.175+-0.00  0.663+-0.01  0.277+-0.00
-  EWMA control chart           0.551+-0.005   0.552+-0.006   0.551+-0.006  0.236+-0.00  0.686+-0.01  0.351+-0.00
+  EWMA residual score          0.551+-0.005   0.552+-0.006   0.551+-0.006  0.236+-0.00  0.686+-0.01  0.351+-0.00
   Isolation Forest             0.468+-0.006   0.469+-0.006   0.468+-0.006  0.468+-0.01  0.469+-0.01  0.468+-0.01
   Tukey IQR fence              0.397+-0.005   0.321+-0.006   0.355+-0.006  0.131+-0.00  0.631+-0.01  0.217+-0.00
   Robust z (median/MAD)        0.333+-0.006   0.333+-0.006   0.333+-0.006  0.093+-0.00  0.657+-0.01  0.163+-0.00
@@ -26,7 +26,7 @@
   Detector                              --- matched alarm budget ---             -- fixed threshold --
                                 Precision       Recall           F1   Precision     Recall         F1
   RecChain z-score (rolling)   0.624+-0.003   0.624+-0.003   0.624+-0.003  0.525+-0.00  0.659+-0.00  0.584+-0.00
-  EWMA control chart           0.661+-0.003   0.661+-0.003   0.661+-0.003  0.615+-0.00  0.680+-0.00  0.646+-0.00
+  EWMA residual score          0.661+-0.003   0.661+-0.003   0.661+-0.003  0.615+-0.00  0.680+-0.00  0.646+-0.00
   Isolation Forest             0.582+-0.005   0.582+-0.005   0.582+-0.005  0.582+-0.00  0.582+-0.00  0.582+-0.00
   Tukey IQR fence              0.626+-0.003   0.506+-0.002   0.560+-0.003  0.440+-0.00  0.628+-0.00  0.517+-0.00
   Robust z (median/MAD)        0.533+-0.003   0.533+-0.003   0.533+-0.003  0.348+-0.00  0.655+-0.00  0.455+-0.00
@@ -35,9 +35,9 @@
   Detector                              --- matched alarm budget ---             -- fixed threshold --
                                 Precision       Recall           F1   Precision     Recall         F1
   RecChain z-score (rolling)   0.670+-0.002   0.670+-0.002   0.670+-0.002  0.699+-0.00  0.659+-0.00  0.678+-0.00
-  EWMA control chart           0.716+-0.001   0.716+-0.001   0.716+-0.001  0.771+-0.00  0.679+-0.00  0.722+-0.00
+  EWMA residual score          0.716+-0.001   0.716+-0.001   0.716+-0.001  0.771+-0.00  0.679+-0.00  0.722+-0.00
   Isolation Forest             0.628+-0.002   0.628+-0.002   0.628+-0.002  0.628+-0.00  0.628+-0.00  0.628+-0.00
   Tukey IQR fence              0.699+-0.002   0.576+-0.002   0.631+-0.002  0.623+-0.00  0.627+-0.00  0.625+-0.00
   Robust z (median/MAD)        0.611+-0.002   0.611+-0.002   0.611+-0.002  0.530+-0.00  0.654+-0.00  0.585+-0.00
 
-  Written -> /home/lysos/Desktop/Panagiotis/papers/RecChain/evaluation_v2/results/real_data_evaluation.json
+  Written -> /home/lysos/Desktop/Panagiotis/Projects/REC_Dapp_Ethereum/evaluation_v2/results/real_data_evaluation.json

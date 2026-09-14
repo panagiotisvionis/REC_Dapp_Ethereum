@@ -10,7 +10,7 @@
 
 require('dotenv').config();
 const { ethers }  = require('ethers');
-const artifact    = require('../build/contracts/RecDapp.json');
+const artifact    = require('../server/lib/artifact').loadRecDappArtifact();
 
 async function main() {
   // Admin = deployer (first account from mnemonic)

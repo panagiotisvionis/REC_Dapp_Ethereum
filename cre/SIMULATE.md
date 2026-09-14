@@ -77,6 +77,7 @@ carrying only the other two meters.
 | TypeScript type-checks against `@chainlink/cre-sdk@1.19.1` | `npm run typecheck` (from `cre/screening/`) — 0 errors |
 | Screening rule unit tests | `node cre/screen.test.js` (from the repo root) — 9/9 |
 | Consumer contract unit tests | `npx hardhat test test/RecDappCRE.test.js` — 11/11 |
+| Consumer and registry integration | `npx hardhat test test/CREIntegration.test.js` — 7/7 |
 | Fetch-and-screen against a live endpoint | `node cre/integration.test.js` (from the repo root) — 8/8 |
 | Execution inside the CRE runtime | `cre workflow simulate screening` — passes, three scenarios (see below) |
 | **Deployment to a CRE registry** | **not done; requires `cre account access`** |

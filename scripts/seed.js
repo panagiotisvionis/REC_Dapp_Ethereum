@@ -21,7 +21,7 @@
 
 require('dotenv').config();
 const { ethers } = require('ethers');
-const artifact   = require('../build/contracts/RecDapp.json');
+const artifact   = require('../server/lib/artifact').loadRecDappArtifact();
 
 const DRY_RUN = process.argv.includes('--dry-run');
 
