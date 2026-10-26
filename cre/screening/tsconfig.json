@@ -3,7 +3,9 @@
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
@@ -11,5 +13,8 @@
     "forceConsistentCasingInFileNames": true,
     "types": []
   },
-  "include": ["main.ts"]
+  "include": [
+    "main.ts",
+    "rule.ts"
+  ]
 }

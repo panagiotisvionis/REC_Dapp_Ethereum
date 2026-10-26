@@ -4,21 +4,21 @@ Gas price: 30 gwei | ETH/USD: $3200
 
 Function                           Gas Used   Cost (USD)   Note
 --------------------------------------------------------------------------------
-deploy                              3995280    $383.5469   (one-time)
-grantRole                             51513      $4.9452   
+deploy                              4036369    $387.4914   (one-time)
+grantRole                             51513      $4.9452
 setFunctionsSource                   160203     $15.3795   (151b source)
-setDonConfig                          51796      $4.9724   
-setURI                                40973      $3.9334   
-issueRec                             222078     $21.3195   (1 MWh, Solar)
-issueRec (5 MWh)                     222090     $21.3206   (5 MWh, Wind)
-issueRec (100 MWh)                   222018     $21.3137   (100 MWh, Hydro)
-safeTransferFrom                      57236      $5.4947   (500 kWh, P2P)
-listRec                              192985     $18.5266   (500 kWh listed)
-buyRec                                81244      $7.7994   (100 kWh partial)
-buyRec (clears listing)               55984      $5.3745   (400 kWh, full clear)
-cancelListing                         54723      $5.2534   
-retireRec (partial)                   81120      $7.7875   (500 kWh)
-retireRec (full batch)               101315      $9.7262   (1000 kWh, sets fullyRetired)
+setDonConfig                          51796      $4.9724
+setURI                                40973      $3.9334
+issueRec                             222194     $21.3306   (1 MWh, Solar)
+issueRec (5 MWh)                     222206     $21.3318   (5 MWh, Wind)
+issueRec (100 MWh)                   222134     $21.3249   (100 MWh, Hydro)
+safeTransferFrom                      59748      $5.7358   (500 kWh, P2P)
+listRec                              193509     $18.5769   (500 kWh listed)
+buyRec                                83737      $8.0388   (100 kWh partial)
+buyRec (clears listing)               57979      $5.5660   (400 kWh, full clear)
+cancelListing                         54873      $5.2678
+retireRec (partial)                   81277      $7.8026   (500 kWh)
+retireRec (full batch)               101472      $9.7413   (1000 kWh, sets fullyRetired)
 --------------------------------------------------------------------------------
 
 Note: costs are estimates at 30 gwei. Actual Sepolia/mainnet costs vary with network congestion.

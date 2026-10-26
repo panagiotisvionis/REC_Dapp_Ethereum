@@ -19,15 +19,13 @@ function seededRandom(seed) {
 
 // Generate realistic production curve for a meter
 // Solar follows a bell curve through the day; wind is more uniform
-function simulateReading(meter, dateSeed) {
-  const hourOfDay = new Date().getUTCHours();
+function simulateReading(meter, dateSeed, hourOfDay = new Date().getUTCHours()) {
   let curve = 1.0;
 
   if (meter.source === 'Solar') {
-    // Bell curve peaking at 13:00 UTC
-    const h = (hourOfDay - 13) / 5;
-    curve = Math.exp(-0.5 * h * h);
-    if (hourOfDay < 5 || hourOfDay > 21) curve = 0;
+    // Synthetic half-sine reference; not a physical meter model.
+    curve = hourOfDay >= 4 && hourOfDay <= 17
+      ? Math.sin(Math.PI * (hourOfDay - 4) / 13) : 0;
   }
 
   const base  = meter.peakKwh * curve;
@@ -59,7 +57,8 @@ router.get('/meter/:meterId', (req, res) => {
     return res.status(404).json({ valid: false, reason: `Unknown meter: ${meterId}` });
   }
 
-  const today      = Math.floor(Date.now() / 86400000); // day index
+  const intervalEnd = Math.floor(Date.now() / 3600000) * 3600000;
+  const today      = Math.floor(intervalEnd / 86400000); // day index
   const history    = generateHistory(meter, today);
   const current    = simulateReading(meter, today);
 
@@ -80,6 +79,8 @@ router.get('/meter/:meterId', (req, res) => {
     source:         meter.source,
     region:         meter.region,
     kwhProduced:    anomalyInjected ? kwhProduced * 15 : kwhProduced,
+    kwh:            anomalyInjected ? kwhProduced * 15 : kwhProduced,
+    timestampUtc:   new Date(intervalEnd).toISOString(),
     historicalAvg,
     stdDev:         Math.round(stdDev),
     zScore:         parseFloat(zScore.toFixed(2)),
@@ -99,9 +100,10 @@ router.get('/meter/:meterId/history', (req, res) => {
   const today   = Math.floor(Date.now() / 86400000);
   const history = [];
 
-  for (let d = 29; d >= 0; d--) {
+  const end = Math.floor(Date.now() / 3600000) * 3600000;
+  for (let d = 30; d >= 1; d--) {
     const date = new Date((today - d) * 86400000).toISOString().slice(0, 10);
-    history.push({ date, kwh: Math.round(simulateReading(meter, today - d)) });
+    history.push({ date, timestampUtc: new Date(end-d*86400000).toISOString(), kwh: Math.round(simulateReading(meter, today - d)) });
   }
 
   res.json({ meterId, source: meter.source, region: meter.region, history });

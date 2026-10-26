@@ -1,0 +1,1588 @@
+{
+  "protocol": {
+    "frozen_before_detector_results": "2026-10-26",
+    "source": "PVDAQ Public Datasets, DOI 10.25984/1846021",
+    "systems_snapshot": "systems_20250729.csv",
+    "selection": "Sort by numeric system_id; qa_status=pass, years>=2, DC capacity>=10 kW; select first site in each distinct Koppen climate class, stopping at three.",
+    "sites": [
+      34,
+      1199,
+      1239
+    ],
+    "period": "2018-01-01 through 2018-07-31",
+    "sampling": "Apply metadata scale to pre-August raw channels; clip negative auxiliary load to zero, exclude samples above 1.2 times DC nameplate kW; rectangular hourly energy approximation, right-labelled UTC interval ends, rounded median sampling cadence, 75--125% record coverage; do not fill missing hours.",
+    "split": "First 106 calendar days (before 2018-04-17 UTC) calibration; remaining 106 days test; trailing 30 finite prior same-UTC-hour readings within 45 days.",
+    "policies": [
+      "capacity_guard_only",
+      "rolling_z_fixed_3",
+      "ewma_calibrated_1pct"
+    ],
+    "calibration": "EWMA lambda fixed at 0.5 from prior Greek-data study; threshold is per-site 99th percentile of unmodified calibration residuals, never refitted on test",
+    "injection": "1% and 5% of finite test readings; seeds 6000..6011; five equal-probability transformations: 50% over-report, 150% over-report, 50% under-report, zero, or low-output collapse; night selections get positive ghost production; unchanged transforms are excluded from positive labels",
+    "history": [
+      "clean reference (diagnostic)",
+      "all received readings enter future reference windows (streaming stress test)"
+    ],
+    "outcomes": [
+      "precision",
+      "recall",
+      "F1",
+      "excess kWh admitted relative to unmodified measured series",
+      "unmodified kWh withheld",
+      "alert rate",
+      "monthly batch-equivalent issuance with 1 MWh floor"
+    ],
+    "uncertainty": "report each site separately and mean over injection seeds; confidence intervals condition on these fixed sites and periods",
+    "scope": "Unmodified measured generation is a reference, not verified anomaly-free ground truth. No REC fraud labels, device authentication or statutory registry acceptance are asserted.",
+    "qc_amendment_before_any_detector_results": "Common end date reduced to the last full month before an August 2018 source schema/unit discontinuity (scale changes at sites 34 and 1239, aggregate-channel disappearance at 1199). No inferred magnitude-based repair is applied.",
+    "common_guard": "All three policies reject received hourly kWh above 1.2 times site DC capacity kW, before any statistical comparison.",
+    "scale_floor_kwh": 1.0
+  },
+  "sites": {
+    "34": {
+      "name": "Andre Agassi Preparatory Academy - Building A",
+      "capacity_kw": 146.64,
+      "calibration_n": 1815,
+      "test_n": 2531,
+      "finite_hours": 5066,
+      "threshold": 3.225035665032203,
+      "unmodified_test_ewma_alert_rate": 0.017779533781114184,
+      "unmodified_test_z_alert_rate": 0.0225207427894113
+    },
+    "1199": {
+      "name": "Distributed Sun - Hunt Valley",
+      "capacity_kw": 52.92,
+      "calibration_n": 765,
+      "test_n": 1436,
+      "finite_hours": 2654,
+      "threshold": 3.1513056319747625,
+      "unmodified_test_ewma_alert_rate": 0.005571030640668524,
+      "unmodified_test_z_alert_rate": 0.003481894150417827
+    },
+    "1239": {
+      "name": "Univ. of Maine - Presque Isle",
+      "capacity_kw": 20.16,
+      "calibration_n": 1818,
+      "test_n": 2541,
+      "finite_hours": 5079,
+      "threshold": 3.493257523878758,
+      "unmodified_test_ewma_alert_rate": 0.0,
+      "unmodified_test_z_alert_rate": 0.0
+    }
+  },
+  "summary": [
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.5833333333333334,
+        "ci95_halfwidth": 0.3271700556940073
+      },
+      "R": {
+        "mean": 0.0309963768115942,
+        "ci95_halfwidth": 0.022225349532739195
+      },
+      "F1": {
+        "mean": 0.058156288156288156,
+        "ci95_halfwidth": 0.040338615544188085
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.00029632556301856976,
+        "ci95_halfwidth": 0.00021740272225322392
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.23038897188270013,
+        "ci95_halfwidth": 0.13645365910061483
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 295.2896398091007,
+        "ci95_halfwidth": 47.3082993561263
+      },
+      "batch_equivalent_kwh": {
+        "mean": 83462.25,
+        "ci95_halfwidth": 131.01398725177955
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.29289155491695373,
+        "ci95_halfwidth": 0.015037352568738642
+      },
+      "R": {
+        "mean": 0.7721877156659765,
+        "ci95_halfwidth": 0.04306262000614698
+      },
+      "F1": {
+        "mean": 0.42459564758036145,
+        "ci95_halfwidth": 0.02196281810651134
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.024792572105887003,
+        "ci95_halfwidth": 0.0005034943960095859
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.8890553185823632,
+        "ci95_halfwidth": 0.06623061559840789
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.014671212279743676,
+        "ci95_halfwidth": 0.00014337856711269168
+      },
+      "excess_admitted_kwh": {
+        "mean": 42.984375,
+        "ci95_halfwidth": 25.667759197118635
+      },
+      "batch_equivalent_kwh": {
+        "mean": 81843.5,
+        "ci95_halfwidth": 111.83934018578493
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.25682014367682826,
+        "ci95_halfwidth": 0.015351231663135909
+      },
+      "R": {
+        "mean": 0.8186447550034507,
+        "ci95_halfwidth": 0.059661761010135
+      },
+      "F1": {
+        "mean": 0.39083641148367354,
+        "ci95_halfwidth": 0.024219850384796023
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.029928881864875547,
+        "ci95_halfwidth": 0.0005676743443234327
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.9019515173169697,
+        "ci95_halfwidth": 0.0634116782214632
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.020439408269973303,
+        "ci95_halfwidth": 0.0001404056944797958
+      },
+      "excess_admitted_kwh": {
+        "mean": 37.794791666666676,
+        "ci95_halfwidth": 24.351236646288847
+      },
+      "batch_equivalent_kwh": {
+        "mean": 81321.33333333333,
+        "ci95_halfwidth": 97.77464153189595
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.5833333333333334,
+        "ci95_halfwidth": 0.3271700556940073
+      },
+      "R": {
+        "mean": 0.0309963768115942,
+        "ci95_halfwidth": 0.022225349532739195
+      },
+      "F1": {
+        "mean": 0.058156288156288156,
+        "ci95_halfwidth": 0.040338615544188085
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.00029632556301856976,
+        "ci95_halfwidth": 0.00021740272225322392
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.23038897188270013,
+        "ci95_halfwidth": 0.13645365910061483
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 295.2896398091007,
+        "ci95_halfwidth": 47.3082993561263
+      },
+      "batch_equivalent_kwh": {
+        "mean": 83462.25,
+        "ci95_halfwidth": 131.01398725177955
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.31453844189707075,
+        "ci95_halfwidth": 0.020584578445636905
+      },
+      "R": {
+        "mean": 0.7413302277432711,
+        "ci95_halfwidth": 0.03936538356304821
+      },
+      "F1": {
+        "mean": 0.4413253604214636,
+        "ci95_halfwidth": 0.026145380542722127
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.02222441722639273,
+        "ci95_halfwidth": 0.0006253012998491373
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.8739229657039886,
+        "ci95_halfwidth": 0.06364635291662357
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0126302332999157,
+        "ci95_halfwidth": 0.0008091991380865185
+      },
+      "excess_admitted_kwh": {
+        "mean": 52.60793319474948,
+        "ci95_halfwidth": 25.726126569689182
+      },
+      "batch_equivalent_kwh": {
+        "mean": 82045.08333333333,
+        "ci95_halfwidth": 73.52812831483214
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.2760363100267586,
+        "ci95_halfwidth": 0.021949549488600745
+      },
+      "R": {
+        "mean": 0.7629736024844721,
+        "ci95_halfwidth": 0.054919707940165007
+      },
+      "F1": {
+        "mean": 0.4051896369568053,
+        "ci95_halfwidth": 0.03081142075408273
+      },
+      "actual_rate": {
+        "mean": 0.009416567891478997,
+        "ci95_halfwidth": 0.0002995893048236174
+      },
+      "alert_rate": {
+        "mean": 0.026043724483076517,
+        "ci95_halfwidth": 0.0005505975102712811
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.8710388041050434,
+        "ci95_halfwidth": 0.06337756206493202
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.017098661555440865,
+        "ci95_halfwidth": 0.0010192037277167902
+      },
+      "excess_admitted_kwh": {
+        "mean": 53.84334986141614,
+        "ci95_halfwidth": 25.694863804969437
+      },
+      "batch_equivalent_kwh": {
+        "mean": 81660.08333333333,
+        "ci95_halfwidth": 84.18564803241166
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.046889466610943474,
+        "ci95_halfwidth": 0.014778588830940622
+      },
+      "F1": {
+        "mean": 0.08871451058319525,
+        "ci95_halfwidth": 0.02696639273915183
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.0022718293164757015,
+        "ci95_halfwidth": 0.0007190541694763481
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3082786972554397,
+        "ci95_halfwidth": 0.07553839294060902
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 1665.942752813895,
+        "ci95_halfwidth": 106.04604271171249
+      },
+      "batch_equivalent_kwh": {
+        "mean": 82884.75,
+        "ci95_halfwidth": 316.010346918654
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.70026269421081,
+        "ci95_halfwidth": 0.009003803772345689
+      },
+      "R": {
+        "mean": 0.8108714464418364,
+        "ci95_halfwidth": 0.02541194127780719
+      },
+      "F1": {
+        "mean": 0.7512563277526789,
+        "ci95_halfwidth": 0.014789636367316353
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.056071381535624916,
+        "ci95_halfwidth": 0.0015079525337897996
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.91979019867559,
+        "ci95_halfwidth": 0.023789566571517803
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.014481502738056427,
+        "ci95_halfwidth": 0.000540234857031704
+      },
+      "excess_admitted_kwh": {
+        "mean": 191.12291666666667,
+        "ci95_halfwidth": 53.37275106139949
+      },
+      "batch_equivalent_kwh": {
+        "mean": 79185.16666666667,
+        "ci95_halfwidth": 267.2878267343838
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.6528242338192983,
+        "ci95_halfwidth": 0.007940873816476459
+      },
+      "R": {
+        "mean": 0.8286101976164763,
+        "ci95_halfwidth": 0.019065048975748393
+      },
+      "F1": {
+        "mean": 0.7301357056501209,
+        "ci95_halfwidth": 0.010944602212672946
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.06147109179507441,
+        "ci95_halfwidth": 0.0012776059655425504
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.9300082704815112,
+        "ci95_halfwidth": 0.016421879531760553
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.020219251429755284,
+        "ci95_halfwidth": 0.0006684373207260851
+      },
+      "excess_admitted_kwh": {
+        "mean": 169.61979166666666,
+        "ci95_halfwidth": 39.98263438043777
+      },
+      "batch_equivalent_kwh": {
+        "mean": 78644.66666666667,
+        "ci95_halfwidth": 273.0776063276001
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.046889466610943474,
+        "ci95_halfwidth": 0.014778588830940622
+      },
+      "F1": {
+        "mean": 0.08871451058319525,
+        "ci95_halfwidth": 0.02696639273915183
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.0022718293164757015,
+        "ci95_halfwidth": 0.0007190541694763481
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3082786972554397,
+        "ci95_halfwidth": 0.07553839294060902
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 1665.942752813895,
+        "ci95_halfwidth": 106.04604271171249
+      },
+      "batch_equivalent_kwh": {
+        "mean": 82884.75,
+        "ci95_halfwidth": 316.010346918654
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.7949977539440245,
+        "ci95_halfwidth": 0.022818672798425865
+      },
+      "R": {
+        "mean": 0.591939736985705,
+        "ci95_halfwidth": 0.030780556628394375
+      },
+      "F1": {
+        "mean": 0.6777898631544931,
+        "ci95_halfwidth": 0.025377364740891868
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.03608586856315027,
+        "ci95_halfwidth": 0.0017729328693024595
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.7939207858042948,
+        "ci95_halfwidth": 0.030116935715522104
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.005523232376468157,
+        "ci95_halfwidth": 0.0009937713874289683
+      },
+      "excess_admitted_kwh": {
+        "mean": 495.9196506120931,
+        "ci95_halfwidth": 54.64009701049591
+      },
+      "batch_equivalent_kwh": {
+        "mean": 80621.91666666667,
+        "ci95_halfwidth": 238.7729180758441
+      }
+    },
+    {
+      "site": 34,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.7648822340365008,
+        "ci95_halfwidth": 0.01850940254738989
+      },
+      "R": {
+        "mean": 0.6171625118003696,
+        "ci95_halfwidth": 0.027618914685883365
+      },
+      "F1": {
+        "mean": 0.6826008692123674,
+        "ci95_halfwidth": 0.022099539359893325
+      },
+      "actual_rate": {
+        "mean": 0.04843276702225735,
+        "ci95_halfwidth": 0.0004598849991722102
+      },
+      "alert_rate": {
+        "mean": 0.039082049255893585,
+        "ci95_halfwidth": 0.0015305777989220466
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.7983292790883513,
+        "ci95_halfwidth": 0.024996579641253985
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.007366566019005817,
+        "ci95_halfwidth": 0.0009859495913904872
+      },
+      "excess_admitted_kwh": {
+        "mean": 488.31863124528445,
+        "ci95_halfwidth": 54.31419356887404
+      },
+      "batch_equivalent_kwh": {
+        "mean": 80455.33333333333,
+        "ci95_halfwidth": 191.31569787782652
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.5833333333333334,
+        "ci95_halfwidth": 0.3271700556940073
+      },
+      "R": {
+        "mean": 0.04166666666666666,
+        "ci95_halfwidth": 0.02336928969242909
+      },
+      "F1": {
+        "mean": 0.07777777777777778,
+        "ci95_halfwidth": 0.043622674092534314
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.0004062209842154132,
+        "ci95_halfwidth": 0.00022783430062256775
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.250188167721912,
+        "ci95_halfwidth": 0.14962604544557725
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 63.23939207666666,
+        "ci95_halfwidth": 13.8438208191423
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24624.666666666668,
+        "ci95_halfwidth": 30.829668275228887
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.1393939393939394,
+        "ci95_halfwidth": 0.062487833185347647
+      },
+      "R": {
+        "mean": 0.10119047619047618,
+        "ci95_halfwidth": 0.05284914985947736
+      },
+      "F1": {
+        "mean": 0.11689706428836862,
+        "ci95_halfwidth": 0.057221653321573966
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.006557567316620242,
+        "ci95_halfwidth": 0.0005152424081007543
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3675402542087612,
+        "ci95_halfwidth": 0.1820907550287168
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0005517710224147707,
+        "ci95_halfwidth": 7.257003461569015e-07
+      },
+      "excess_admitted_kwh": {
+        "mean": 52.255972129583334,
+        "ci95_halfwidth": 15.619439499783736
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24592.0,
+        "ci95_halfwidth": 30.955197888382543
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.1999007936507936,
+        "ci95_halfwidth": 0.060714303273951935
+      },
+      "R": {
+        "mean": 0.09523809523809522,
+        "ci95_halfwidth": 0.035331045052795704
+      },
+      "F1": {
+        "mean": 0.1286796536796537,
+        "ci95_halfwidth": 0.04473187341644776
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.004410399257195915,
+        "ci95_halfwidth": 0.00034445308547293867
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4058226736530393,
+        "ci95_halfwidth": 0.15530025778800935
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.00021568401709524035,
+        "ci95_halfwidth": 2.836719572215362e-07
+      },
+      "excess_admitted_kwh": {
+        "mean": 49.06789660166667,
+        "ci95_halfwidth": 12.85554045624719
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24592.833333333332,
+        "ci95_halfwidth": 21.939429693079813
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.5833333333333334,
+        "ci95_halfwidth": 0.3271700556940073
+      },
+      "R": {
+        "mean": 0.04166666666666666,
+        "ci95_halfwidth": 0.02336928969242909
+      },
+      "F1": {
+        "mean": 0.07777777777777778,
+        "ci95_halfwidth": 0.043622674092534314
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.0004062209842154132,
+        "ci95_halfwidth": 0.00022783430062256775
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.250188167721912,
+        "ci95_halfwidth": 0.14962604544557725
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 63.23939207666666,
+        "ci95_halfwidth": 13.8438208191423
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24624.666666666668,
+        "ci95_halfwidth": 30.829668275228887
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.13754208754208755,
+        "ci95_halfwidth": 0.07072620758167789
+      },
+      "R": {
+        "mean": 0.08928571428571429,
+        "ci95_halfwidth": 0.0478927921827536
+      },
+      "F1": {
+        "mean": 0.10797211242863415,
+        "ci95_halfwidth": 0.05671834708310988
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.006093314763231199,
+        "ci95_halfwidth": 0.00042710793652329254
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3675402542087612,
+        "ci95_halfwidth": 0.1820907550287168
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0005393028921143544,
+        "ci95_halfwidth": 3.195075552395746e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 52.255972129583334,
+        "ci95_halfwidth": 15.619439499783736
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24592.416666666668,
+        "ci95_halfwidth": 30.797659767482706
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.25853174603174606,
+        "ci95_halfwidth": 0.09139857130289032
+      },
+      "R": {
+        "mean": 0.09523809523809522,
+        "ci95_halfwidth": 0.035331045052795704
+      },
+      "F1": {
+        "mean": 0.13766524153521056,
+        "ci95_halfwidth": 0.049435178485934435
+      },
+      "actual_rate": {
+        "mean": 0.009749303621169918,
+        "ci95_halfwidth": 1.1512006539269703e-18
+      },
+      "alert_rate": {
+        "mean": 0.003597957288765089,
+        "ci95_halfwidth": 0.0005280365811341055
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4058226736530393,
+        "ci95_halfwidth": 0.15530025778800935
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0001609991581989381,
+        "ci95_halfwidth": 3.428546974040078e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 49.06789660166667,
+        "ci95_halfwidth": 12.85554045624719
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24594.166666666668,
+        "ci95_halfwidth": 22.24178944861173
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.07511737089201878,
+        "ci95_halfwidth": 0.02203059215115518
+      },
+      "F1": {
+        "mean": 0.1379453295690188,
+        "ci95_halfwidth": 0.03854265594602385
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.0037140204271123496,
+        "ci95_halfwidth": 0.0010892562971671434
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4782127037427351,
+        "ci95_halfwidth": 0.097770615654987
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 256.27817624125004,
+        "ci95_halfwidth": 48.860698343679275
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24157.083333333332,
+        "ci95_halfwidth": 99.31721132152437
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.5671766639157944,
+        "ci95_halfwidth": 0.06176408322821169
+      },
+      "R": {
+        "mean": 0.15140845070422534,
+        "ci95_halfwidth": 0.03240631961146554
+      },
+      "F1": {
+        "mean": 0.23779445983990233,
+        "ci95_halfwidth": 0.04618519830179556
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.01282497678737233,
+        "ci95_halfwidth": 0.0015948401043579742
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.6201793668834322,
+        "ci95_halfwidth": 0.08068217412775013
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0005558402649667979,
+        "ci95_halfwidth": 3.628802409678546e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 187.13170767374996,
+        "ci95_halfwidth": 41.54392581329607
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24020.0,
+        "ci95_halfwidth": 98.0159427475569
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.6587162722611638,
+        "ci95_halfwidth": 0.060496567912462995
+      },
+      "R": {
+        "mean": 0.1467136150234742,
+        "ci95_halfwidth": 0.034013907283303633
+      },
+      "F1": {
+        "mean": 0.2382630358758462,
+        "ci95_halfwidth": 0.04975430833161384
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.010677808727948003,
+        "ci95_halfwidth": 0.0016266065278510828
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.6190677456349234,
+        "ci95_halfwidth": 0.08464425983788974
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.00022140817596231168,
+        "ci95_halfwidth": 8.020392761384462e-06
+      },
+      "excess_admitted_kwh": {
+        "mean": 184.89247951041662,
+        "ci95_halfwidth": 35.47977918801869
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24023.0,
+        "ci95_halfwidth": 89.17468143184311
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.07511737089201878,
+        "ci95_halfwidth": 0.02203059215115518
+      },
+      "F1": {
+        "mean": 0.1379453295690188,
+        "ci95_halfwidth": 0.03854265594602385
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.0037140204271123496,
+        "ci95_halfwidth": 0.0010892562971671434
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4782127037427351,
+        "ci95_halfwidth": 0.097770615654987
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 256.27817624125004,
+        "ci95_halfwidth": 48.860698343679275
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24157.083333333332,
+        "ci95_halfwidth": 99.31721132152437
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.6250105227726711,
+        "ci95_halfwidth": 0.047754682998647324
+      },
+      "R": {
+        "mean": 0.1408450704225352,
+        "ci95_halfwidth": 0.024729278357212142
+      },
+      "F1": {
+        "mean": 0.22810728468071276,
+        "ci95_halfwidth": 0.03493229444842871
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.011084029712163415,
+        "ci95_halfwidth": 0.0017131996734682108
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.605427319994574,
+        "ci95_halfwidth": 0.09069292618179838
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0006464256570627346,
+        "ci95_halfwidth": 0.00019640906220241554
+      },
+      "excess_admitted_kwh": {
+        "mean": 193.64964956624996,
+        "ci95_halfwidth": 44.357849249069204
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24026.75,
+        "ci95_halfwidth": 109.21476361724191
+      }
+    },
+    {
+      "site": 1199,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 0.8440187603790545,
+        "ci95_halfwidth": 0.05649871773871931
+      },
+      "R": {
+        "mean": 0.13262910798122066,
+        "ci95_halfwidth": 0.02867152708195192
+      },
+      "F1": {
+        "mean": 0.22685821964588967,
+        "ci95_halfwidth": 0.04376368590587317
+      },
+      "actual_rate": {
+        "mean": 0.04944289693593316,
+        "ci95_halfwidth": 4.604802615707881e-18
+      },
+      "alert_rate": {
+        "mean": 0.007718198700092851,
+        "ci95_halfwidth": 0.0015380322058821826
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.60092596893602,
+        "ci95_halfwidth": 0.09255273608669805
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 7.564474644717542e-05,
+        "ci95_halfwidth": 2.471154818228038e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 193.14081270999998,
+        "ci95_halfwidth": 37.088373490868044
+      },
+      "batch_equivalent_kwh": {
+        "mean": 24040.25,
+        "ci95_halfwidth": 95.08266891883615
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.75,
+        "ci95_halfwidth": 0.28735675309652164
+      },
+      "R": {
+        "mean": 0.041274154589371975,
+        "ci95_halfwidth": 0.022369796227106793
+      },
+      "F1": {
+        "mean": 0.07731718898385564,
+        "ci95_halfwidth": 0.04020055382793891
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.00039354584809130256,
+        "ci95_halfwidth": 0.0002132408854616806
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3192261444346056,
+        "ci95_halfwidth": 0.16514438262017295
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 36.343078809780756,
+        "ci95_halfwidth": 8.107275409507064
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10492.916666666666,
+        "ci95_halfwidth": 19.586141729423023
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.09893719806763285,
+        "ci95_halfwidth": 0.036540544866747494
+      },
+      "F1": {
+        "mean": 0.175615927282594,
+        "ci95_halfwidth": 0.05892075430552482
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.0009510691328873147,
+        "ci95_halfwidth": 0.0003609119047769315
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4642177400011889,
+        "ci95_halfwidth": 0.1250600799818604
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 28.679028099722586,
+        "ci95_halfwidth": 5.724073437139479
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10482.666666666666,
+        "ci95_halfwidth": 15.542865207566209
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.16484299516908213,
+        "ci95_halfwidth": 0.044370528403802366
+      },
+      "F1": {
+        "mean": 0.2772871480868793,
+        "ci95_halfwidth": 0.0665332774429645
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.0015741833923652107,
+        "ci95_halfwidth": 0.0004264817709233612
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.5555046907788429,
+        "ci95_halfwidth": 0.11528074012097786
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 23.962244256453502,
+        "ci95_halfwidth": 5.562841663555249
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10477.333333333334,
+        "ci95_halfwidth": 14.780391262294886
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 0.75,
+        "ci95_halfwidth": 0.28735675309652164
+      },
+      "R": {
+        "mean": 0.041274154589371975,
+        "ci95_halfwidth": 0.022369796227106793
+      },
+      "F1": {
+        "mean": 0.07731718898385564,
+        "ci95_halfwidth": 0.04020055382793891
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.00039354584809130256,
+        "ci95_halfwidth": 0.0002132408854616806
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.3192261444346056,
+        "ci95_halfwidth": 0.16514438262017295
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 36.343078809780756,
+        "ci95_halfwidth": 8.107275409507064
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10492.916666666666,
+        "ci95_halfwidth": 19.586141729423023
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.9375,
+        "ci95_halfwidth": 0.09873352043762444
+      },
+      "R": {
+        "mean": 0.09893719806763285,
+        "ci95_halfwidth": 0.036540544866747494
+      },
+      "F1": {
+        "mean": 0.1747171347171347,
+        "ci95_halfwidth": 0.05888461129425522
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.0010166601075691985,
+        "ci95_halfwidth": 0.0003609119047769315
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4642177400011889,
+        "ci95_halfwidth": 0.1250600799818604
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 1.670234773529418e-05,
+        "ci95_halfwidth": 2.4977445779465887e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 28.679028099722586,
+        "ci95_halfwidth": 5.724073437139479
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10482.5,
+        "ci95_halfwidth": 15.60217509406675
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.01,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.16484299516908213,
+        "ci95_halfwidth": 0.044370528403802366
+      },
+      "F1": {
+        "mean": 0.2772871480868793,
+        "ci95_halfwidth": 0.0665332774429645
+      },
+      "actual_rate": {
+        "mean": 0.009576282303555029,
+        "ci95_halfwidth": 0.00019466140524956304
+      },
+      "alert_rate": {
+        "mean": 0.0015741833923652107,
+        "ci95_halfwidth": 0.0004264817709233612
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.5555046907788429,
+        "ci95_halfwidth": 0.11528074012097786
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 23.962244256453502,
+        "ci95_halfwidth": 5.562841663555249
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10477.333333333334,
+        "ci95_halfwidth": 14.780391262294886
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.04744803675045215,
+        "ci95_halfwidth": 0.01494106103675647
+      },
+      "F1": {
+        "mean": 0.0897270624669964,
+        "ci95_halfwidth": 0.026877118978687286
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.002295684113865932,
+        "ci95_halfwidth": 0.000721823809553863
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.32974149234601224,
+        "ci95_halfwidth": 0.07716609697207266
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 194.9818732728039,
+        "ci95_halfwidth": 11.950027917054136
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10360.5,
+        "ci95_halfwidth": 27.203780497809777
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.12265016996863505,
+        "ci95_halfwidth": 0.018374440137657305
+      },
+      "F1": {
+        "mean": 0.21739599596010972,
+        "ci95_halfwidth": 0.029741504034892667
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.005935983208710481,
+        "ci95_halfwidth": 0.000882172758065321
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4919033635091142,
+        "ci95_halfwidth": 0.06609686522591844
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 147.90059557802203,
+        "ci95_halfwidth": 11.703508666781977
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10296.833333333334,
+        "ci95_halfwidth": 27.967859772991964
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "clean",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.1727217767740843,
+        "ci95_halfwidth": 0.018436629028302298
+      },
+      "F1": {
+        "mean": 0.2935975210818523,
+        "ci95_halfwidth": 0.02712754028551172
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.00836284927194018,
+        "ci95_halfwidth": 0.0008864577754249338
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.5698625106646947,
+        "ci95_halfwidth": 0.055469116041939624
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 125.24815753999343,
+        "ci95_halfwidth": 10.019508205679463
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10268.416666666666,
+        "ci95_halfwidth": 25.277898590169173
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "capacity_guard_only",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.04744803675045215,
+        "ci95_halfwidth": 0.01494106103675647
+      },
+      "F1": {
+        "mean": 0.0897270624669964,
+        "ci95_halfwidth": 0.026877118978687286
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.002295684113865932,
+        "ci95_halfwidth": 0.000721823809553863
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.32974149234601224,
+        "ci95_halfwidth": 0.07716609697207266
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 194.9818732728039,
+        "ci95_halfwidth": 11.950027917054136
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10360.5,
+        "ci95_halfwidth": 27.203780497809777
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "ewma_calibrated_1pct",
+      "P": {
+        "mean": 0.9953703703703703,
+        "ci95_halfwidth": 0.01018974611153537
+      },
+      "R": {
+        "mean": 0.10913687308551408,
+        "ci95_halfwidth": 0.018464585081452798
+      },
+      "F1": {
+        "mean": 0.1954988023510038,
+        "ci95_halfwidth": 0.030370552680646486
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.005312868949232586,
+        "ci95_halfwidth": 0.0009078403568848041
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.4680417483097747,
+        "ci95_halfwidth": 0.06751771338539864
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 7.733630425135474e-06,
+        "ci95_halfwidth": 1.702160579935637e-05
+      },
+      "excess_admitted_kwh": {
+        "mean": 154.74199729104475,
+        "ci95_halfwidth": 11.034728386931468
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10305.25,
+        "ci95_halfwidth": 27.892031924169498
+      }
+    },
+    {
+      "site": 1239,
+      "rate": 0.05,
+      "history": "received_history",
+      "policy": "rolling_z_fixed_3",
+      "P": {
+        "mean": 1.0,
+        "ci95_halfwidth": 0.0
+      },
+      "R": {
+        "mean": 0.16528919506186943,
+        "ci95_halfwidth": 0.018794585592912746
+      },
+      "F1": {
+        "mean": 0.28266949022714327,
+        "ci95_halfwidth": 0.027810387124152677
+      },
+      "actual_rate": {
+        "mean": 0.048438934802571165,
+        "ci95_halfwidth": 0.0005052766666877039
+      },
+      "alert_rate": {
+        "mean": 0.008002098911189819,
+        "ci95_halfwidth": 0.0009005062696316562
+      },
+      "excess_rejected_fraction": {
+        "mean": 0.5585597751875169,
+        "ci95_halfwidth": 0.053595768885987445
+      },
+      "unmodified_energy_withheld_fraction": {
+        "mean": 0.0,
+        "ci95_halfwidth": 0.0
+      },
+      "excess_admitted_kwh": {
+        "mean": 128.64666058773227,
+        "ci95_halfwidth": 9.493508591619312
+      },
+      "batch_equivalent_kwh": {
+        "mean": 10273.5,
+        "ci95_halfwidth": 22.51511422961692
+      }
+    }
+  ],
+  "data_sha256": "4cb3b7d4911124b96ac677573dc7fa380e7382ae5d75b47a1a5d56f8f7f3b1e8"
+}

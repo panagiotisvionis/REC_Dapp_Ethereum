@@ -1,98 +1,81 @@
-/**
- * Revised issuance path, contracts wired together: RecDappCRE (report consumer)
- * minting into RecDappWorkflowRegistry (RecDapp plus the restricted
- * issueFromWorkflow entry point).
- *
- * The CRE forwarder is represented by a test account and reports are encoded
- * exactly as cre/screening/main.ts encodes them (string[] meterIds,
- * uint256[] kWh). Delivery through a live DON is not exercised here.
- */
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const { resolveProvenance } = require("../server/lib/provenance");
-
-const Source = { Solar: 0, Wind: 1, Hydro: 2 };
-const MWH = 1000n;
-
-describe("CRE integration — consumer and workflow registry", function () {
-  let registry, consumer, router, admin, forwarder, producer, outsider;
-
-  const report = (ids, kwh) =>
-    ethers.AbiCoder.defaultAbiCoder().encode(["string[]", "uint256[]"], [ids, kwh]);
-
-  beforeEach(async function () {
-    [admin, forwarder, producer, outsider] = await ethers.getSigners();
-    router = await (await ethers.getContractFactory("MockFunctionsRouter")).deploy();
-    registry = await (await ethers.getContractFactory("RecDappWorkflowRegistry"))
-      .deploy("ipfs://base/", await router.getAddress());
-    consumer = await (await ethers.getContractFactory("RecDappCRE"))
-      .deploy(await registry.getAddress(), forwarder.address);
-    await registry.connect(admin).grantRole(await registry.WORKFLOW_ROLE(), await consumer.getAddress());
-    await consumer.connect(admin).bindMeter("METER_GR_001", producer.address, Source.Solar, "GR-AT");
-  });
-
-  it("mints a screened reading into the registry, with the consumer as issuer", async function () {
-    await expect(consumer.connect(forwarder).onReport("0x", report(["METER_GR_001"], [35n * MWH])))
-      .to.emit(consumer, "IssuanceAccepted").withArgs("METER_GR_001", 1n, 35n * MWH)
-      .and.to.emit(registry, "WorkflowIssuance");
-    expect(await registry.balanceOf(producer.address, 1n)).to.equal(35n * MWH);
-    const m = await registry.recMetadata(1n);
-    expect(m.issuer).to.equal(await consumer.getAddress());
-    expect(m.dataHash).to.equal("cre://METER_GR_001");
-    expect(await registry.issuedByWorkflow(1n)).to.equal(true);
-  });
-
-  it("applies the consumer's floor and binding checks before reaching the registry", async function () {
-    await consumer.connect(admin).bindMeter("METER_GR_002", producer.address, Source.Wind, "GR-MA");
-    await consumer.connect(forwarder).onReport("0x",
-      report(["METER_GR_001", "METER_GR_002", "UNBOUND"], [35n * MWH, 500n, 2n * MWH]));
-    expect(await registry.balanceOf(producer.address, 1n)).to.equal(35n * MWH);
-    expect(await registry.issuedByWorkflow(2n)).to.equal(false);   // nothing else minted
-  });
-
-  it("reverts the report when the consumer does not hold WORKFLOW_ROLE", async function () {
-    await registry.connect(admin).revokeRole(await registry.WORKFLOW_ROLE(), await consumer.getAddress());
-    await expect(consumer.connect(forwarder).onReport("0x", report(["METER_GR_001"], [35n * MWH])))
-      .to.be.revertedWithCustomError(registry, "AccessControlUnauthorizedAccount");
-  });
-
-  it("does not let an ISSUER_ROLE account call the workflow entry point", async function () {
-    await expect(registry.connect(admin).issueFromWorkflow(producer.address, Source.Solar, 35n * MWH, "GR-AT", "cre://X"))
-      .to.be.revertedWithCustomError(registry, "AccessControlUnauthorizedAccount");
-  });
-
-  it("enforces the registry's own floor and source range on the workflow path", async function () {
-    await registry.connect(admin).grantRole(await registry.WORKFLOW_ROLE(), outsider.address);
-    await expect(registry.connect(outsider).issueFromWorkflow(producer.address, Source.Solar, 999n, "GR-AT", "cre://X"))
-      .to.be.revertedWith("Minimum 1 MWh (1 000 kWh)");
-    await expect(registry.connect(outsider).issueFromWorkflow(producer.address, 9, 35n * MWH, "GR-AT", "cre://X"))
-      .to.be.revertedWith("Invalid source");
-  });
-
-  it("keeps the three issuance paths distinguishable by issuer, not by reference", async function () {
-    const reg = await registry.getAddress();
-    // CRE path
-    await consumer.connect(forwarder).onReport("0x", report(["METER_GR_001"], [35n * MWH]));
-    // Functions path, inherited unchanged
-    await registry.connect(admin).setFunctionsSource("return Functions.encodeUint256(2000);");
-    await registry.connect(admin).setDonConfig(ethers.encodeBytes32String("don"), 1, 300000);
-    await registry.connect(admin).requestAutoIssuance(producer.address, Source.Wind, "GR-MA", "METER_GR_009");
-    await router.fulfilWithValue(reg, await router.lastRequestId(), 2n * MWH);
-    // Manual path with a reference that imitates the oracle
-    await registry.connect(admin).issueRec(producer.address, Source.Hydro, 3n * MWH, "GR-EP", "oracle://METER_GR_009");
-
-    const classify = async (id) => resolveProvenance(await registry.recMetadata(id),
-      { registryAddress: reg, issuedByWorkflow: await registry.issuedByWorkflow(id) });
-    expect((await classify(1n)).path).to.equal("workflow");
-    expect((await classify(2n)).path).to.equal("functions");
-    const spoof = await classify(3n);
-    expect(spoof.path).to.equal("manual");
-    expect(spoof.referenceClaimsOracle).to.equal(true);
-  });
-
-  it("accepts only the configured forwarder end to end", async function () {
-    await expect(consumer.connect(outsider).onReport("0x", report(["METER_GR_001"], [35n * MWH])))
-      .to.be.revertedWithCustomError(consumer, "UnauthorisedForwarder");
-    expect(await registry.balanceOf(producer.address, 1n)).to.equal(0n);
-  });
+const {expect}=require('chai');
+const {ethers}=require('hardhat');
+const H=require('./helpers/cre-report');
+describe('Workflow issuance invariants',function(){
+ let registry,consumer,router,admin,forwarder,producer,outsider,end;
+ beforeEach(async function(){
+  [admin,forwarder,producer,outsider]=await ethers.getSigners();
+  router=await(await ethers.getContractFactory('MockFunctionsRouter')).deploy();
+  registry=await(await ethers.getContractFactory('RecDappWorkflowRegistry')).deploy('ipfs://base/',await router.getAddress());
+  consumer=await(await ethers.getContractFactory('RecDappCRE')).deploy(await registry.getAddress(),forwarder.address);
+  await registry.grantRole(await registry.WORKFLOW_ROLE(),await consumer.getAddress());
+  await consumer.setWorkflow(H.workflowId,H.workflowName,admin.address);
+  await consumer.bindMeter('M',producer.address,0,'GR-AT');
+  end=(await ethers.provider.getBlock('latest')).timestamp-10;
+ });
+ async function issue(kwh=2000n,start,endValue){
+  return consumer.connect(forwarder).onReport(H.metadata(admin.address),H.report([H.reading('M',kwh,endValue??end,start??end-3600)]));
+ }
+ it('links minted balances to a stored interval and decision receipt',async function(){
+  await issue();
+  expect(await registry.balanceOf(producer.address,1)).to.equal(2000);
+  const r=await registry.issuanceReceipt(1);
+  expect(r.evidenceHash).to.equal(H.evidenceHash);expect(r.policyHash).to.equal(H.policyHash);
+  expect(r.start).to.equal(end-3600);expect(r.end).to.equal(end);
+  expect(await registry.issuedByWorkflow(1)).to.equal(true);
+ });
+ it('blocks a second issuance for the same interval even when quantity is changed',async function(){
+  await issue();
+  await expect(issue(3000n)).to.be.revertedWith('Interval already issued');
+  expect(await registry.remainingKwh(1)).to.equal(2000);
+ });
+ it('blocks overlaps and permits the next adjacent completed interval',async function(){
+  await issue();
+  await expect(issue(3000n,end-1800,end+1)).to.be.revertedWith('Overlapping or out-of-order interval');
+  const now=(await ethers.provider.getBlock('latest')).timestamp;
+  await issue(3000n,end,now);
+  expect(await registry.balanceOf(producer.address,2)).to.equal(3000);
+ });
+ it('preserves interval uniqueness when the consumer or workflow version changes',async function(){
+  await issue();
+  const replacement=await(await ethers.getContractFactory('RecDappCRE')).deploy(await registry.getAddress(),forwarder.address);
+  await replacement.setWorkflow(ethers.id('v3'),H.workflowName,admin.address);
+  await replacement.bindMeter('M',producer.address,0,'GR-AT');
+  await registry.grantRole(await registry.WORKFLOW_ROLE(),await replacement.getAddress());
+  await expect(replacement.connect(forwarder).onReport(H.metadata(admin.address,ethers.id('v3')),H.report([H.reading('M',4000n,end)]))).to.be.revertedWith('Interval already issued');
+ });
+ it('forbids the manual issuer role from calling workflow issuance',async function(){
+  await expect(registry.issueFromWorkflow(H.batch(producer.address,{start:end-3600,end}))).to.be.revertedWithCustomError(registry,'AccessControlUnauthorizedAccount');
+ });
+ it('rolls back consumed keys when minting fails and allows a valid retry',async function(){
+  await registry.revokeRole(await registry.WORKFLOW_ROLE(),await consumer.getAddress());
+  await expect(issue()).to.be.reverted;
+  await registry.grantRole(await registry.WORKFLOW_ROLE(),await consumer.getAddress());
+  await issue();expect(await registry.balanceOf(producer.address,1)).to.equal(2000);
+ });
+ it('requires evidence and valid intervals at the registry boundary',async function(){
+  await registry.grantRole(await registry.WORKFLOW_ROLE(),admin.address);
+  await expect(registry.issueFromWorkflow(H.batch(producer.address,{start:end-3600,end,evidenceHash:ethers.ZeroHash}))).to.be.revertedWith('Missing evidence');
+  await expect(registry.issueFromWorkflow(H.batch(producer.address,{start:end,end:end-1}))).to.be.revertedWith('Invalid interval');
+  // The receiver rejects ERC-1155 tokens after interval consumption was set.
+  // Both the interval key and progress must roll back so the same interval
+  // can subsequently be minted to a valid recipient.
+  await expect(registry.issueFromWorkflow(H.batch(await router.getAddress(),{start:end-3600,end}))).to.be.revertedWithCustomError(registry,'ERC1155InvalidReceiver');
+  await registry.issueFromWorkflow(H.batch(producer.address,{start:end-3600,end}));
+  expect(await registry.balanceOf(producer.address,1)).to.equal(2000);
+ });
+ it('keeps manual certificates separate from workflow receipts',async function(){
+  await registry.issueRec(producer.address,0,2000,'GR-AT','cre://M');
+  expect(await registry.issuedByWorkflow(1)).to.equal(false);
+  expect((await registry.issuanceReceipt(1)).evidenceHash).to.equal(ethers.ZeroHash);
+ });
+ it('blocks purchases and direct circulation after expiry, while allowing escrow recovery',async function(){
+  await issue(4000n);
+  await registry.connect(producer).listRec(1,2000,1);
+  await ethers.provider.send('evm_increaseTime',[366*86400]);await ethers.provider.send('evm_mine',[]);
+  await expect(registry.connect(outsider).buyRec(0,1000,{value:1000})).to.be.revertedWith('Certificate expired');
+  await expect(registry.connect(producer).safeTransferFrom(producer.address,outsider.address,1,1000,'0x')).to.be.revertedWith('Certificate expired');
+  await registry.connect(producer).cancelListing(0);
+  expect(await registry.balanceOf(producer.address,1)).to.equal(4000);
+ });
 });

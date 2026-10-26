@@ -38,7 +38,8 @@ function reading(meterId, daysAgo, hour) {
   const m = METERS[meterId];
   const seed = daysAgo * 37 + hour * 7 + meterId.charCodeAt(11);
   const kwh = Math.max(0, level(m.peak, hour) + (rnd(seed) - 0.5) * 2 * m.noise);
-  const d = new Date(Date.UTC(2026, 7, 16 - daysAgo, hour));
+  const base = Math.floor(Date.now()/3600000)*3600000;
+  const d = new Date(base-daysAgo*86400000);
   return { timestampUtc: d.toISOString(), kwh: Math.round(kwh * 1000) / 1000 };
 }
 

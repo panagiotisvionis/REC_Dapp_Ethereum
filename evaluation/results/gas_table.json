@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T06:31:16.507Z",
+  "timestamp": "2026-10-26T17:45:36.634Z",
   "network": "Hardhat (local, cancun fork)",
   "solidity": "0.8.28, optimizer 200 runs",
   "gas_price_gwei": 30,
@@ -7,8 +7,8 @@
   "entries": [
     {
       "function": "deploy",
-      "gas_used": 3995280,
-      "cost_usd": 383.5469,
+      "gas_used": 4036369,
+      "cost_usd": 387.4914,
       "note": "(one-time)"
     },
     {
@@ -37,62 +37,62 @@
     },
     {
       "function": "issueRec",
-      "gas_used": 222078,
-      "cost_usd": 21.3195,
+      "gas_used": 222194,
+      "cost_usd": 21.3306,
       "note": "(1 MWh, Solar)"
     },
     {
       "function": "issueRec (5 MWh)",
-      "gas_used": 222090,
-      "cost_usd": 21.3206,
+      "gas_used": 222206,
+      "cost_usd": 21.3318,
       "note": "(5 MWh, Wind)"
     },
     {
       "function": "issueRec (100 MWh)",
-      "gas_used": 222018,
-      "cost_usd": 21.3137,
+      "gas_used": 222134,
+      "cost_usd": 21.3249,
       "note": "(100 MWh, Hydro)"
     },
     {
       "function": "safeTransferFrom",
-      "gas_used": 57236,
-      "cost_usd": 5.4947,
+      "gas_used": 59748,
+      "cost_usd": 5.7358,
       "note": "(500 kWh, P2P)"
     },
     {
       "function": "listRec",
-      "gas_used": 192985,
-      "cost_usd": 18.5266,
+      "gas_used": 193509,
+      "cost_usd": 18.5769,
       "note": "(500 kWh listed)"
     },
     {
       "function": "buyRec",
-      "gas_used": 81244,
-      "cost_usd": 7.7994,
+      "gas_used": 83737,
+      "cost_usd": 8.0388,
       "note": "(100 kWh partial)"
     },
     {
       "function": "buyRec (clears listing)",
-      "gas_used": 55984,
-      "cost_usd": 5.3745,
+      "gas_used": 57979,
+      "cost_usd": 5.566,
       "note": "(400 kWh, full clear)"
     },
     {
       "function": "cancelListing",
-      "gas_used": 54723,
-      "cost_usd": 5.2534,
+      "gas_used": 54873,
+      "cost_usd": 5.2678,
       "note": ""
     },
     {
       "function": "retireRec (partial)",
-      "gas_used": 81120,
-      "cost_usd": 7.7875,
+      "gas_used": 81277,
+      "cost_usd": 7.8026,
       "note": "(500 kWh)"
     },
     {
       "function": "retireRec (full batch)",
-      "gas_used": 101315,
-      "cost_usd": 9.7262,
+      "gas_used": 101472,
+      "cost_usd": 9.7413,
       "note": "(1000 kWh, sets fullyRetired)"
     }
   ]

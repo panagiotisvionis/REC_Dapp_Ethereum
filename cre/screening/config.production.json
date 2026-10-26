@@ -1,12 +1,19 @@
 {
   "schedule": "0 0 * * * *",
   "meterApiBaseUrl": "https://your-iot-api.example",
-  "meterIds": ["METER_GR_001", "METER_GR_002", "METER_GR_003"],
+  "meterIds": [
+    "METER_GR_001",
+    "METER_GR_002",
+    "METER_GR_003"
+  ],
   "consumerAddress": "0x0000000000000000000000000000000000000000",
   "chainSelector": "ethereum-testnet-sepolia",
-  "gasLimit": "500000",
+  "gasLimit": "2000000",
   "threshold": 3.48,
   "lambda": 0.5,
   "windowDays": 30,
-  "minKwh": 1000
+  "minKwh": 1000,
+  "maxReadingAgeSeconds": 7200,
+  "maxHistoryAgeDays": 45,
+  "maxKwh": 20000
 }

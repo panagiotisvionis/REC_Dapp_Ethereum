@@ -1,0 +1,5 @@
+# Preserve upstream input snapshots and archived source byte-for-byte.
+evaluation_journal/data/pvdaq_systems_20250729.csv -text -whitespace
+paper/analysis/data/gr_generation_hourly.csv -text -whitespace
+paper/analysis/evaluate_honest.py -text -whitespace
+paper/analysis/evaluate_real.py -text -whitespace

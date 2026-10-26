@@ -1,0 +1,47 @@
+{
+  "34": {
+    "rows": 20328,
+    "cadence_seconds": 900.0,
+    "duplicates_averaged": 0,
+    "negative_power_clipped": 9839,
+    "above_capacity_samples_excluded": 0,
+    "capacity_bound_kw": 175.968,
+    "finite_hours": 5074,
+    "hours": 5088,
+    "energy_kwh": 143701.8,
+    "max_hour_kwh": 117.4,
+    "channel": "ac_power_hw__2695",
+    "factor_to_kw": 0.1,
+    "timezone": "America/Los_Angeles"
+  },
+  "1199": {
+    "rows": 32925,
+    "cadence_seconds": 300.0,
+    "duplicates_averaged": 0,
+    "negative_power_clipped": 0,
+    "above_capacity_samples_excluded": 0,
+    "capacity_bound_kw": 63.504,
+    "finite_hours": 2655,
+    "hours": 5077,
+    "energy_kwh": 41412.17926370184,
+    "max_hour_kwh": 48.81355009916667,
+    "channel": "ac_power__2714",
+    "factor_to_kw": 0.001,
+    "timezone": "America/New_York"
+  },
+  "1239": {
+    "rows": 20391,
+    "cadence_seconds": 900.0,
+    "duplicates_averaged": 0,
+    "negative_power_clipped": 576,
+    "above_capacity_samples_excluded": 0,
+    "capacity_bound_kw": 24.192,
+    "finite_hours": 5084,
+    "hours": 5088,
+    "energy_kwh": 12222.28525,
+    "max_hour_kwh": 23.14,
+    "channel": "ac_power_metered_kw__3015",
+    "factor_to_kw": 1.0,
+    "timezone": "America/New_York"
+  }
+}

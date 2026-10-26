@@ -241,6 +241,7 @@ contract RecDapp is ERC1155, ERC1155Holder, AccessControl, ReentrancyGuard, Func
         require(amount > 0 && amount <= listing.amount,    "Invalid amount");
         require(msg.value == amount * listing.pricePerKwh, "Incorrect payment");
 
+        require(block.timestamp <= recMetadata[listing.tokenId].expiresAt, "Certificate expired");
         listing.amount -= amount;
         if (listing.amount == 0) listing.active = false;
 
@@ -335,6 +336,18 @@ contract RecDapp is ERC1155, ERC1155Holder, AccessControl, ReentrancyGuard, Func
         _mint(producer, tokenId, kwh, "");
 
         emit RecIssued(tokenId, producer, source, kwh, location, expiry);
+    }
+
+    // Expired balances cannot circulate; escrow can still be cancelled and returned.
+    function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
+        internal override
+    {
+        if (from != address(0) && to != address(0) && from != address(this)) {
+            for (uint256 i; i < ids.length; ++i) {
+                require(block.timestamp <= recMetadata[ids[i]].expiresAt, "Certificate expired");
+            }
+        }
+        super._update(from, to, ids, values);
     }
 
     // ── Interface support ─────────────────────────────────────────────────────

@@ -1,0 +1,39 @@
+{
+  "frozen_before_detector_results": "2026-10-26",
+  "source": "PVDAQ Public Datasets, DOI 10.25984/1846021",
+  "systems_snapshot": "systems_20250729.csv",
+  "selection": "Sort by numeric system_id; qa_status=pass, years>=2, DC capacity>=10 kW; select first site in each distinct Koppen climate class, stopping at three.",
+  "sites": [
+    34,
+    1199,
+    1239
+  ],
+  "period": "2018-01-01 through 2018-07-31",
+  "sampling": "Apply metadata scale to pre-August raw channels; clip negative auxiliary load to zero, exclude samples above 1.2 times DC nameplate kW; rectangular hourly energy approximation, right-labelled UTC interval ends, rounded median sampling cadence, 75--125% record coverage; do not fill missing hours.",
+  "split": "First 106 calendar days (before 2018-04-17 UTC) calibration; remaining 106 days test; trailing 30 finite prior same-UTC-hour readings within 45 days.",
+  "policies": [
+    "capacity_guard_only",
+    "rolling_z_fixed_3",
+    "ewma_calibrated_1pct"
+  ],
+  "calibration": "EWMA lambda fixed at 0.5 from prior Greek-data study; threshold is per-site 99th percentile of unmodified calibration residuals, never refitted on test",
+  "injection": "1% and 5% of finite test readings; seeds 6000..6011; five equal-probability transformations: 50% over-report, 150% over-report, 50% under-report, zero, or low-output collapse; night selections get positive ghost production; unchanged transforms are excluded from positive labels",
+  "history": [
+    "clean reference (diagnostic)",
+    "all received readings enter future reference windows (streaming stress test)"
+  ],
+  "outcomes": [
+    "precision",
+    "recall",
+    "F1",
+    "excess kWh admitted relative to unmodified measured series",
+    "unmodified kWh withheld",
+    "alert rate",
+    "monthly batch-equivalent issuance with 1 MWh floor"
+  ],
+  "uncertainty": "report each site separately and mean over injection seeds; confidence intervals condition on these fixed sites and periods",
+  "scope": "Unmodified measured generation is a reference, not verified anomaly-free ground truth. No REC fraud labels, device authentication or statutory registry acceptance are asserted.",
+  "qc_amendment_before_any_detector_results": "Common end date reduced to the last full month before an August 2018 source schema/unit discontinuity (scale changes at sites 34 and 1239, aggregate-channel disappearance at 1199). No inferred magnitude-based repair is applied.",
+  "common_guard": "All three policies reject received hourly kWh above 1.2 times site DC capacity kW, before any statistical comparison.",
+  "scale_floor_kwh": 1.0
+}

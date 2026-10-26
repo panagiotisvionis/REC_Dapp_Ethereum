@@ -4,7 +4,15 @@
   "main": "dist/main.js",
   "private": true,
   "license": "MIT",
-  "scripts": { "typecheck": "tsc --noEmit" },
-  "dependencies": { "@chainlink/cre-sdk": "^1.19.0", "viem": "^2.54.2" },
-  "devDependencies": { "typescript": "5.9.3" }
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chainlink/cre-sdk": "^1.19.0",
+    "viem": "^2.54.2"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "type": "module"
 }

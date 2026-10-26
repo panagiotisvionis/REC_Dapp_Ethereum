@@ -1,0 +1,12 @@
+\begin{table}[tb]\centering\small
+\caption{Held-out detection with thresholds fitted to a nominal 1\% alert rate on unmodified calibration scores and then frozen. Entries are mean $\pm$ 95\% Student-t confidence half-width over twelve injection replications. Intervals condition on the same national series.}\label{tab:frozen}
+\begin{tabular}{@{}lcccccc@{}}\toprule
+ & \multicolumn{3}{c}{Rolling z-score, $\tau=3.67$} & \multicolumn{3}{c}{EWMA, $\lambda=0.5$, $\tau=2.95$}\\
+\cmidrule(lr){2-4}\cmidrule(l){5-7}
+Prevalence & Precision & Recall & F1 & Precision & Recall & F1\\\midrule
+0.5\% & $0.273\pm0.009$ & $0.562\pm0.024$ & $0.367\pm0.013$ & $0.228\pm0.007$ & $0.646\pm0.026$ & $0.337\pm0.011$\\
+1\% & $0.435\pm0.009$ & $0.571\pm0.021$ & $0.494\pm0.013$ & $0.376\pm0.007$ & $0.656\pm0.020$ & $0.478\pm0.011$\\
+5\% & $0.798\pm0.003$ & $0.565\pm0.009$ & $0.662\pm0.007$ & $0.756\pm0.003$ & $0.650\pm0.010$ & $0.699\pm0.007$\\
+10\% & $0.894\pm0.002$ & $0.569\pm0.006$ & $0.695\pm0.005$ & $0.869\pm0.001$ & $0.651\pm0.007$ & $0.744\pm0.005$\\
+\bottomrule\end{tabular}
+\end{table}

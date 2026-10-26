@@ -1,3 +1,21 @@
+# Current revision versus archived simulation
+
+The current workflow uses V2 structured reports: meter ID, production start/end,
+quantity, evidence hash and policy hash. This revision passes local unit/HTTP and
+contract tests, type checking and WASM compilation. It has not been simulated
+with CRE CLI or deployed to a live DON in this revision. The previous simulation
+report below is historical and does not validate the V2 receiver or payload.
+
+For reproducible current checks, use [the journal guide](../evaluation_journal/README.md).
+Before a future live simulation, deploy a fresh local/test receiver, grant its
+WORKFLOW_ROLE in the registry, bind canonical meters, set the forwarder and pin
+all three workflow identity fields using `setWorkflow`. The workflow ID changes
+with the compiled workflow/configuration. Use the documented metadata format.
+Sample zero addresses and sample thresholds are placeholders, not deployment
+settings. Do not broadcast merely to reproduce the local checks.
+
+---
+
 # Running the CRE simulation
 
 Everything below is prepared; the simulation itself needs CRE credentials, which

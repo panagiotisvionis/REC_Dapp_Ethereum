@@ -10,3 +10,10 @@ coverage/
 coverage.json
 build/
 __pycache__/
+
+# Journal manuscript build intermediates (source and figures are tracked)
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/RecChain.pdf
+paper/analysis/results/*.tex.tmp

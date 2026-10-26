@@ -1,22 +1,29 @@
 
 # Renewable Energy Certificates (RECs) dApp on Ethereum
 
-> ## Status of the issuance path
->
-> This repository contains **two** oracle-mediated issuance implementations. They
-> are not interchangeable and the distinction matters when reading the
-> accompanying manuscript.
->
-> | Path | Location | Statistic | Status |
-> |---|---|---|---|
-> | **Legacy (evaluated)** | `functions/source.js`, `contracts/RecDapp.sol` | rolling z-score, fixed 3-sigma | Deployed on Sepolia; **Chainlink Functions was withdrawn in June 2026**, so this path can no longer execute |
-> | **Revised** | `cre/screening/main.ts`, `contracts/RecDappCRE.sol`, `contracts/RecDappWorkflowRegistry.sol` | EWMA, lambda*=0.5, separately calibrated alert threshold | Implemented, unit-tested (9/9 + 11/11), and **passing local CRE simulation** (CLI v1.30.0); **not deployed to a CRE registry** |
->
-> All empirical results reported in the manuscript characterise the **legacy**
-> path. The revised path acts on those results; no measurement derives from it.
-> The contract, marketplace, retirement and public verification paths are
-> unaffected by the withdrawal and remain live.
->
+## Journal revision (26 October 2026)
+
+The current research branch adds workflow metadata authentication, report replay
+protection, registry-level consumption of non-overlapping meter intervals, and
+commitments to screening evidence and policy. Expired certificates cannot be
+purchased or transferred between peers; cancellation can return expired escrow.
+
+The public PV experiment compares a common capacity guard, rolling z-score and
+historically calibrated EWMA on three installations. Received-history results
+are mixed; EWMA is not uniformly better. This is controlled corruption of public
+PV output, not verified fraud detection or physical-meter deployment.
+
+See [evaluation_journal/README.md](evaluation_journal/README.md) for data,
+protocol, replication results and reproducible commands, and
+[paper/README.md](paper/README.md) for the revised manuscript.
+
+The current revision passes 72 local Hardhat cases (57 behavioural, 15 gas),
+ten rule tests and eight HTTP fixture checks. The workflow type checks and
+compiles to WASM. It has **not** been registered with or run on a live CRE DON.
+Simulation claims in the archived release concern the earlier payload format.
+The legacy Functions integration is retained as historical code; its service
+was withdrawn in June 2026. No new chain deployment is performed here.
+
 > ## Security
 >
 > A `.env` file containing live credentials, including a wallet mnemonic and an

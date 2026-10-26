@@ -1,0 +1,43 @@
+{
+  "date_utc": "2026-10-26",
+  "scope": "Local verification and compilation only; no live CRE simulation, deployment or independent security audit",
+  "hardhat": {
+    "passed": 72,
+    "behavioural": 57,
+    "gas_harness": 15
+  },
+  "shared_rule_tests_passed": 10,
+  "http_fixture_checks_passed": 8,
+  "application_api_smoke": "PASS: current kwh/timestamp schema, 30 unique strictly prior history records",
+  "cross_language_score_checks": {
+    "passed": 12,
+    "absolute_tolerance": 1e-10
+  },
+  "typecheck": "PASS (also enforced by cre-compile)",
+  "wasm_compile": "PASS",
+  "wasm_sha256": "61c2a0ed91238d00ca55db8eb97f088d4b3f7397a5e4df3aa9bf35819bc72b4b",
+  "source_sha256": {
+    "contracts/RecDapp.sol": "5986f8e9ac129b5338b49777728d09381b5b2285af0bd55334895e2a9486fe47",
+    "contracts/RecDappCRE.sol": "2b9dbbc3fb561882d0a7d750b900304af3b2ee0bb3734baaf81257e666f697c3",
+    "contracts/RecDappWorkflowRegistry.sol": "0c3715734ae81ef14476612a9a58295c64009f9f4e12a8e387a40c65b7c38e23",
+    "contracts/IWorkflowRegistry.sol": "0dd5917c24a2460506df029860aeaabf3929060e23b4519cdbd11fe741b8fb52",
+    "cre/screening/rule.ts": "18e9eff86b29a271249fc01808ba532887c92da1fd27cd9aae63a23948411521",
+    "cre/screening/main.ts": "fd260e36470683f167399edb4b08fe220bb76266aecd5a5be2dadac3f0adaca2",
+    "evaluation_journal/data/pvdaq_hourly_2018.csv": "4cb3b7d4911124b96ac677573dc7fa380e7382ae5d75b47a1a5d56f8f7f3b1e8"
+  },
+  "python": "Python 3.12.14",
+  "python_packages": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.8.0"
+  },
+  "node": "v24.22.1",
+  "cre_sdk": "1.19.1",
+  "typescript": "5.9.3",
+  "bun": "1.4.4",
+  "javy": "8.1.0",
+  "base_revision": "a6831773e2c24ed5968baa1db978e38a8bc1b53e"
+}
