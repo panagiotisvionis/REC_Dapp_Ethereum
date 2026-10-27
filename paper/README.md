@@ -1,6 +1,7 @@
 # RecChain revised manuscript
 
-Sole author: Panagiotis Vionis. This is the 26 October 2026 research revision.
+Sole author: Panagiotis Vionis. This is the 26 October 2026 research revision, with language and structure updated
+on 27 October 2026.
 The manuscript separates earlier synthetic/national experiments from the new
 three-site PVDAQ study and revised workflow contracts. It makes no claim of a
 new detection algorithm, live CRE operation or recognised-registry conformity.
@@ -24,3 +25,6 @@ The PDF has been rendered and inspected. The source package preserves the main
 LaTeX source, generated material and earlier analysis; the complete current
 application and new experiment are in the research branch, identified by the
 commit in the accompanying `REVISION.txt` when packaged.
+
+The manuscript uses six main sections. Writing preferences are recorded in
+`WRITING_GUIDELINES_EL.md` and in the repository instructions.

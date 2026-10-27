@@ -22,23 +22,23 @@ body=[]
 climates={34:'Bwh',1199:'Cfa',1239:'Dfb'}
 for sid,x in d['sites'].items():
  body.append(f"{sid} ({climates[int(sid)]}) & {x['capacity_kw']:.2f} & {x['finite_hours']:,} & {x['calibration_n']:,} & {x['test_n']:,} & {x['threshold']:.3f}\\\\")
-table('site_metadata.tex','PVDAQ sites and retained UTC hourly records, January--July 2018. Thresholds use calibration only. Climate codes follow the public system metadata.','tab:sites','lrrrrr','System (climate) & DC kW & Finite hours & Calibration & Test & EWMA threshold',body)
+table('site_metadata.tex','PVDAQ sites and retained UTC hourly records, January to July 2018. Thresholds use calibration only. Climate codes follow the public system metadata.','tab:sites','lrrrrr','System (climate) & DC kW & Finite hours & Calibration & Test & EWMA threshold',body)
 body=[]
 for sid in [34,1199,1239]:
  for rate in [.01,.05]:
   body.append(f'{sid} & {rate*100:.0f}\\% & '+' & '.join(ci(rows[sid,rate,p],'F1') for p in policies)+r'\\')
-table('site_f1.tex','F1 under received-data histories. Values are mean $\\pm$ conditional 95\\% confidence half-width over twelve intervention seeds. Rates denote attempted interventions, not verified fraud prevalence.','tab:sitef1','lrrrr','System & Rate & Capacity only & Rolling z & EWMA',body)
+table('site_f1.tex','F1 under received data histories. Values are mean $\\pm$ conditional 95\\% confidence half width over twelve intervention seeds. Rates denote attempted interventions, not verified fraud prevalence.','tab:sitef1','lrrrr','System & Rate & Capacity only & Rolling z & EWMA',body)
 body=[]
 for sid in [34,1199,1239]:
  for policy,name in zip(policies,names):
   r=rows[sid,.01,policy]
   body.append(f"{sid} & {name} & {r['R']['mean']:.3f} & {r['excess_admitted_kwh']['mean']:.2f} & {100*r['excess_rejected_fraction']['mean']:.2f} & {100*r['unmodified_energy_withheld_fraction']['mean']:.3f}\\\\")
-table('site_energy.tex','Received-history outcomes at 1\\% attempted intervention. Energy columns are seed means; figure whiskers and the supplied replication results quantify uncertainty. Withheld energy excludes intervened readings.','tab:siteenergy','llrrrr','System & Policy & Recall & Excess admitted (kWh) & Excess rejected (\\%) & Withheld (\\%)',body)
+table('site_energy.tex','Results with received history at 1\\% attempted intervention. Energy columns are seed means; figure whiskers and the supplied replication results quantify uncertainty. Withheld energy excludes intervened readings.','tab:siteenergy','llrrrr','System & Policy & Recall & Excess admitted (kWh) & Excess rejected (\\%) & Withheld (\\%)',body)
 gas=json.loads((HERE/'results/gas_v2.json').read_text())['samples']
 body=[]
 for k,name in [('manual','Manual issuance'),('workflow_one_meter','Workflow, one meter'),('workflow_three_meters','Workflow, three meters')]:
  v=np.array(gas[k]);body.append(f'{name} & {v[0]:,} & {np.mean(v[1:]):,.0f} & {np.mean(v):,.0f}'+r'\\')
-table('gas_v2.tex','Local EVM execution gas for the revised contracts; fifteen transactions per case. Service, report transport and off-chain execution charges are excluded.','tab:gasv2','lrrr','Case & First transaction & Following 14 mean & All 15 mean',body)
+table('gas_v2.tex','Local EVM execution gas for the revised contracts; fifteen transactions per case. Service, report transport and offchain execution charges are excluded.','tab:gasv2','lrrr','Case & First transaction & Following 14 mean & All 15 mean',body)
 plt.rcParams.update({'font.family':'DejaVu Sans','font.size':9,'axes.spines.top':False,'axes.spines.right':False,'pdf.fonttype':42})
 fig,axes=plt.subplots(1,2,figsize=(7.0,2.9),layout='constrained')
 x=np.arange(3);width=.24
